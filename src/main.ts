@@ -35,7 +35,7 @@ async function bootstrap() {
   app.use(helmet());
   //router
 
-  await app.listen(3000);
+  await app.listen(process.env.PORT || 8080);
 
   //socket init
   //error
