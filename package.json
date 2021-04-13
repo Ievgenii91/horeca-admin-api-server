@@ -1,8 +1,8 @@
 {
   "name": "nestbn",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "BN api service",
+  "author": "Ievgenii Butyrin",
   "private": true,
   "license": "UNLICENSED",
   "engines": {
@@ -25,14 +25,27 @@
   },
   "dependencies": {
     "@nestjs/common": "^7.6.15",
+    "@nestjs/config": "^0.6.3",
     "@nestjs/core": "^7.6.15",
+    "@nestjs/mongoose": "^7.2.4",
+    "@nestjs/passport": "^7.1.5",
     "@nestjs/platform-express": "^7.6.15",
+    "class-transformer": "^0.4.0",
+    "class-validator": "^0.13.1",
     "cookie-parser": "^1.4.5",
+    "express-jwt": "^6.0.0",
+    "express-jwt-authz": "^2.4.1",
     "express-session": "^1.17.1",
     "helmet": "^4.4.1",
+    "jwks-rsa": "^2.0.2",
+    "mongoose": "^5.12.3",
+    "nestjs-telegraf": "^2.2.2",
+    "passport": "^0.4.1",
+    "passport-jwt": "^4.0.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^6.6.6"
+    "rxjs": "^6.6.6",
+    "telegraf": "^4.3.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.6.0",

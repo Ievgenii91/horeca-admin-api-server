@@ -23,16 +23,14 @@ async function bootstrap() {
     }),
   );
 
-  app.useStaticAssets(join(__dirname, '..', 'public'));
+  app.setGlobalPrefix('api');
+
   app.useStaticAssets(join(__dirname, '..', 'dist'));
-
-  app.setBaseViewsDir(join(__dirname, '..', 'dist'));
-
-  app.setViewEngine('html');
 
   app.enableCors();
 
   app.use(helmet());
+
   //router
 
   await app.listen(process.env.PORT || 8080);
