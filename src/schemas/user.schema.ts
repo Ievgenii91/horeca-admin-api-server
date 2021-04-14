@@ -12,10 +12,7 @@ export interface Ref {
 @Schema()
 export class User {
   @Prop()
-  _id: string;
-
-  @Prop()
-  id: string | number;
+  id: string;
 
   @Prop()
   isBot: boolean;
@@ -50,8 +47,8 @@ export class User {
   @Prop()
   invitedBy: string;
 
-  @Prop()
-  cachedOrder: unknown;
+  // @Prop()
+  // cachedOrder: any;
 
   constructor(data: Partial<User>) {
     if (data) {

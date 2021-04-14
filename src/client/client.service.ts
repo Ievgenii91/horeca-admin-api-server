@@ -15,13 +15,13 @@ export class ClientService {
     return this.clientModel.findOne(filter).exec();
   }
 
+  async getClients(): Promise<Client[]> {
+    return this.clientModel.find({}).exec();
+  }
+
   async getClientProducts(id: string): Promise<Product[]> {
     const { products } = await this.getClient({ _id: id });
     return products;
-  }
-
-  async getClients() {
-    return this.clientModel.find().exec();
   }
 
   async createClient(createClientDto: CreateClientDto) {

@@ -35,6 +35,14 @@ export class Product {
   rating: number;
   @Prop()
   order: number;
+  @Prop()
+  additionalText: string;
+  @Prop()
+  fancyName: string;
+  @Prop()
+  category: string;
+  @Prop()
+  subCategory: string;
 
   constructor(data: Partial<Product> = {}) {
     this.id = data.id || null;
@@ -51,6 +59,10 @@ export class Product {
     this.crossSales = data.crossSales || []; // list of products which can be cross saled
     this.usedForCrossSales = data.usedForCrossSales || false;
     this.rating = data.rating || 1; // rating - order priority, can be overrided by user rating
+    this.additionalText = data.additionalText;
+    this.fancyName = data.fancyName;
+    this.category = data.category;
+    this.subCategory = data.subCategory;
   }
 
   increment() {

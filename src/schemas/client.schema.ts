@@ -1,14 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { ProductSchema, ProductDocument } from './product.schema';
+import { ProductSchema, Product } from './product.schema';
 
 export type ClientDocument = Client & Document;
 
 @Schema()
 export class Client {
-  @Prop()
-  _id: string;
-
   @Prop({ required: true, type: String })
   name: string;
 
@@ -16,7 +13,7 @@ export class Client {
   owner: string;
 
   @Prop({ type: [ProductSchema], required: true })
-  products: ProductDocument[];
+  products: Product[];
 
   @Prop()
   ordersCount: number;

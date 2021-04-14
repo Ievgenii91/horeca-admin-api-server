@@ -3,25 +3,19 @@ import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import * as helmet from 'helmet';
-import * as session from 'express-session';
 import * as cookieParser from 'cookie-parser';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  app.use(cookieParser());
-  app.use(
-    session({
-      secret: '0712asdas3',
-      cookie: {
-        httpOnly: false,
-        sameSite: 'none',
-        secure: true,
-      },
-      resave: false,
-      saveUninitialized: true,
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
     }),
   );
+
+  app.use(cookieParser());
 
   app.setGlobalPrefix('api');
 

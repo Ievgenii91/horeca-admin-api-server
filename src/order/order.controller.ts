@@ -4,7 +4,6 @@ import {
   Get,
   Param,
   Post,
-  Session,
   ValidationPipe,
 } from '@nestjs/common';
 import { Order } from 'src/schemas/order.schema';
@@ -17,11 +16,9 @@ export class OrderController {
 
   @Get('orders')
   getOrders(
-    @Session() session: Record<string, string>,
     @Param('status') status = 'new',
-    @Param('cliendId') id?: string,
+    @Param('cliendId') clientId: string,
   ) {
-    const clientId = id || session.clientId;
     return this.orderService.getOrders({
       clientId,
       status,

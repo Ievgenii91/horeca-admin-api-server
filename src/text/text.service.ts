@@ -10,8 +10,7 @@ export class TextService {
   getTexts(clientId: string) {
     return this.textModel
       .findOne({ clientId })
-      .projection({ _id: 0, clientId: 0, botName: 0 })
-      .exec();
+      .projection({ _id: 0, clientId: 0, botName: 0 });
   }
 
   createTexts(data: Text, clientId: string) {

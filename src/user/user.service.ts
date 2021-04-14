@@ -42,7 +42,7 @@ export class UserService {
       updatedUser = new User({
         ...user,
         appJoins: user.appJoins,
-        cachedOrder: user.cachedOrder,
+        // cachedOrder: user.cachedOrder,
       });
       updatedUser.join();
       await this.userModel

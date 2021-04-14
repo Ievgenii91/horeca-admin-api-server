@@ -5,7 +5,6 @@ import {
   Post,
   ValidationPipe,
   UseGuards,
-  Req,
 } from '@nestjs/common';
 import { ClientService } from './client.service';
 import { CreateClientDto } from './dto/create-client.dto';
@@ -13,7 +12,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { Client } from 'src/schemas/client.schema';
 import { PermissionsGuard } from 'src/authz/permissions.guard';
 import { Permissions } from 'src/authz/permissions.decorator';
-
+import { User } from 'src/decorators/user.decorator';
+import { JwtPayload } from 'src/authz/interfaces/jwt-payload.interface';
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 @Controller('client')
 export class ClientController {
@@ -21,12 +21,16 @@ export class ClientController {
 
   @Get()
   @Permissions('read:oncoming')
-  async getClient(@Req() req): Promise<Client> {
-    const client = await this.clientService.getClient({
-      owner: req.user.email,
+  async getClient(@User() user: JwtPayload): Promise<Client> {
+    return this.clientService.getClient({
+      owner: user.email,
     });
-    req.session.clientId = client._id;
-    return client;
+  }
+
+  @Get('/all')
+  @Permissions('read:oncoming')
+  async getAllClients(): Promise<Client[]> {
+    return this.clientService.getClients();
   }
 
   @Post()
