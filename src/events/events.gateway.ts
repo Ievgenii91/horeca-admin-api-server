@@ -8,8 +8,7 @@ import {
   OnGatewayConnection,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-
-@WebSocketGateway(parseInt(process.env.SOCKETS_PORT), {
+@WebSocketGateway({
   transports: ['websocket'],
   cors: {
     origin: '*',
@@ -31,7 +30,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection {
   }
 
   afterInit(): void {
-    console.log('init socket server on port', process.env.SOCKETS_PORT);
+    console.log('init socket server on port');
   }
 
   handleConnection(socket: Socket) {
