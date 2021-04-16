@@ -45,8 +45,8 @@ export class Product {
   subCategory: string;
 
   constructor(data: Partial<Product> = {}) {
-    this.id = data.id || null;
     this.name = data.name || null;
+    this.id = data.id || this.generateId();
     this.description = data.description || null;
     this.count = data.count || 1;
     this.price = data.price || null;
@@ -63,6 +63,14 @@ export class Product {
     this.fancyName = data.fancyName;
     this.category = data.category;
     this.subCategory = data.subCategory;
+  }
+
+  generateId(): string {
+    return (
+      this.name.toLowerCase().split(' ').join('_') +
+      '_' +
+      new Date().getTime().toString()
+    );
   }
 
   increment() {

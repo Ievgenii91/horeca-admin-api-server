@@ -8,9 +8,10 @@ export class TextService {
   constructor(@InjectModel(Text.name) private textModel: Model<TextDocument>) {}
 
   getTexts(clientId: string) {
-    return this.textModel
-      .findOne({ clientId })
-      .projection({ _id: 0, clientId: 0, botName: 0 });
+    return this.textModel.findOne(
+      { clientId },
+      { _id: 0, clientId: 0, botName: 0 },
+    );
   }
 
   createTexts(data: Text, clientId: string) {
