@@ -15,5 +15,6 @@ import { TextService } from './text.service';
   ],
   controllers: [TextController],
   providers: [TextService],
+  exports: [TextService],
 })
 export class TextModule {}

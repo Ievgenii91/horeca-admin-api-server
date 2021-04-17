@@ -32,6 +32,7 @@
     "@nestjs/platform-express": "^7.6.15",
     "@nestjs/platform-socket.io": "^7.6.15",
     "@nestjs/websockets": "^7.6.15",
+    "@telegraf/session": "^1.0.1",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
     "cookie-parser": "^1.4.5",
@@ -47,7 +48,8 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.6",
-    "telegraf": "^4.3.0"
+    "telegraf": "^4.3.0",
+    "telegraf-i18n": "^6.6.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.6.0",
