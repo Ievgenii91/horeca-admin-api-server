@@ -12,6 +12,7 @@ import {
   ORDER,
 } from './common/actions';
 
+const getProductsButtons = (a?, b?, c?, d?, e?) => [];
 @Injectable()
 export class KeyboardFactory {
   getKeyboard(name, { session, i18n }) {
@@ -20,8 +21,8 @@ export class KeyboardFactory {
       case 'DRINKS_KEYBOARD':
         return [
           [
-            Markup.callbackButton(FOOD_ACTION_NAME, FOOD_ACTION_NAME),
-            Markup.callbackButton(i18n.t('go_back'), BACK_TO_FOOD_ACTION),
+            Markup.button.callback(FOOD_ACTION_NAME, FOOD_ACTION_NAME),
+            Markup.button.callback(i18n.t('go_back'), BACK_TO_FOOD_ACTION),
           ],
           ...getProductsButtons(products, 'bar', i18n, user, order).map((v) => [
             v,
@@ -30,8 +31,8 @@ export class KeyboardFactory {
       case 'DRINKS_KEYBOARD_WITH_ORDER':
         return [
           [
-            Markup.callbackButton(FOOD_ACTION_NAME, FOOD_ACTION_NAME),
-            Markup.callbackButton(i18n.t('order'), ORDER_EDIT),
+            Markup.button.callback(FOOD_ACTION_NAME, FOOD_ACTION_NAME),
+            Markup.button.callback(i18n.t('order'), ORDER_EDIT),
           ],
           ...getProductsButtons(products, 'bar', i18n, user, order).map((v) => [
             v,
@@ -40,16 +41,16 @@ export class KeyboardFactory {
       case 'FOOD_KEYBOARD':
         return [
           [
-            Markup.callbackButton(DRINK_ACTION_NAME, DRINK_ACTION_NAME),
-            Markup.callbackButton(i18n.t('go_back'), BACK_ACTION),
+            Markup.button.callback(DRINK_ACTION_NAME, DRINK_ACTION_NAME),
+            Markup.button.callback(i18n.t('go_back'), BACK_ACTION),
           ],
           ...getProductsButtons(products, 'food', i18n).map((v) => [v]),
         ];
       case 'FOOD_KEYBOARD_WITH_ORDER':
         return [
           [
-            Markup.callbackButton(DRINK_ACTION_NAME, DRINK_ACTION_NAME),
-            Markup.callbackButton(i18n.t('order'), ORDER_EDIT),
+            Markup.button.callback(DRINK_ACTION_NAME, DRINK_ACTION_NAME),
+            Markup.button.callback(i18n.t('order'), ORDER_EDIT),
           ],
           ...getProductsButtons(products, 'food', i18n).map((v) => [v]),
         ];

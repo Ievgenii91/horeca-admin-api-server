@@ -1,12 +1,12 @@
 {
-  "name": "nestbn",
-  "version": "0.0.1",
+  "name": "horeca-api-server",
+  "version": "0.1.0",
   "description": "BN api service",
   "author": "Ievgenii Butyrin",
   "private": true,
   "license": "UNLICENSED",
   "engines": {
-    "node": "12.13.1"
+    "node": "12.18.2"
   },
   "scripts": {
     "prebuild": "rimraf dist",
@@ -32,7 +32,6 @@
     "@nestjs/platform-express": "^7.6.15",
     "@nestjs/platform-socket.io": "^7.6.15",
     "@nestjs/websockets": "^7.6.15",
-    "@telegraf/session": "^1.0.1",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
     "cookie-parser": "^1.4.5",

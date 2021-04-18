@@ -12,14 +12,26 @@ import {
   ORDER,
 } from './common/actions';
 import { Update, Ctx, Start, Help, On, Hears } from 'nestjs-telegraf';
+import { KeyboardFactory } from './keyboard.factory';
+import { ViewService } from './view.service';
+import { SessionService } from './session.service';
 
 @Update()
 @Injectable()
 export class EventsService {
+  constructor(
+    private keyboardFactory: KeyboardFactory,
+    private viewService: ViewService,
+    private sessionService: SessionService,
+  ) {}
   @Start()
   async start(@Ctx() ctx) {
-    const tr = ctx.i18n.t('order_button_name');
-    await ctx.reply(tr);
+    const msg = ctx.i18n.t('hello_message');
+    if (ctx.startPayload) {
+      // await userService.addReferral(ctx, next);
+    }
+    this.sessionService.clearOrder(ctx);
+    await ctx.reply(msg, this.viewService.getHomeView(ctx.i18n));
   }
 
   @Help()

@@ -1,11 +1,11 @@
 import { Telegraf } from 'telegraf';
 import * as TelegrafI18n from 'telegraf-i18n/lib/i18n';
-import { Context } from '../interfaces/context.interface';
 import { ClientService } from 'src/client/client.service';
 import { TextService } from 'src/text/text.service';
 import { ClientDocument } from 'src/schemas/client.schema';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectBot } from 'nestjs-telegraf';
+import { BotContext } from './common/bot.context';
 
 @Injectable()
 export class BasicService implements OnModuleInit {
@@ -13,7 +13,7 @@ export class BasicService implements OnModuleInit {
   private lastUpdate = null;
 
   constructor(
-    @InjectBot(process.env.BOT_NAME) private bot: Telegraf<Context>,
+    @InjectBot(process.env.BOT_NAME) private bot: Telegraf<BotContext>,
     private clientService: ClientService,
     private textService: TextService,
   ) {}
@@ -77,5 +77,4 @@ export class BasicService implements OnModuleInit {
     i18n.loadLocale('uk', texts['_doc']); // TODO remove
     this.bot.use(i18n.middleware());
   }
- 
 }

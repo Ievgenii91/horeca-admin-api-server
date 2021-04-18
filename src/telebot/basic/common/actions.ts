@@ -6,9 +6,9 @@ export const CONTINUE_ORDER_ACTION = 'CONTINUE_ORDER_ACTION';
 export const INCREMENT = 'INCREMENT';
 export const DECREMENT = 'DECREMENT';
 // constTOD import texts
-export const FOOD_ACTION_NAME = 'texts.eat';
-export const DRINK_ACTION_NAME = 'texts.drink';
-export const SUGGEST_ACTION_NAME = 'texts.suggest_me';
-export const MY_BONUS_ACTION_NAME = 'texts.my_bonuses';
-export const SHARE_BONUS = 'texts.share_with_friend';
-export const ORDER = 'texts.order';
+export const FOOD_ACTION_NAME = 'eat';
+export const DRINK_ACTION_NAME = 'drink';
+export const SUGGEST_ACTION_NAME = 'suggest_me';
+export const MY_BONUS_ACTION_NAME = 'my_bonuses';
+export const SHARE_BONUS = 'share_with_friend';
+export const ORDER = 'order';
