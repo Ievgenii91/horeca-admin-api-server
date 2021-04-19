@@ -6,8 +6,9 @@ import { EventsService } from './events.service';
 import { KeyboardFactory } from './keyboard.factory';
 import { ViewService } from './view.service';
 import { SessionService } from './session.service';
+import { UserModule } from 'src/user/user.module';
 @Module({
-  imports: [ClientModule, TextModule],
+  imports: [ClientModule, TextModule, UserModule],
   providers: [
     BasicService,
     EventsService,

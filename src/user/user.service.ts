@@ -3,35 +3,40 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from 'src/schemas/user.schema';
 import { Order } from 'src/schemas/order.schema';
+import { BotContext } from 'src/telebot/basic/common/bot.context';
 
 @Injectable()
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  // async addOrUpdateUser(ctx: any) {
-  //   // this context is loosing after babel compile, strange bug,
-  //   let updatedUser = null;
-  //   const telegramUser = ctx.update.message.from;
-  //   const user = await this.userModel.findOne({ id: telegramUser.id }).exec();
-  //   if (user) {
-  //     // update
-  //     updatedUser = new User({
-  //       ...user,
-  //       ...telegramUser,
-  //       appJoins: user.appJoins,
-  //       cachedOrder: user.cachedOrder,
-  //     });
-  //     updatedUser.join();
-  //     await this.userModel
-  //       .updateOne({ id: telegramUser.id }, { $set: updatedUser })
-  //       .exec();
-  //   } else {
-  //     // add
-  //     updatedUser = new User(telegramUser);
-  //     await this.userModel.create(updatedUser);
-  //   }
-  //   ctx.session.user = updatedUser;
-  // }
+  async addOrUpdateUserMiddleware(ctx: BotContext) {
+    // this context is loosing after babel compile, strange bug,
+    let updatedUser = null;
+    const telegramUser = ctx.from;
+    const user = await this.userModel.findOne({ id: telegramUser.id }).exec();
+    const adaptedUser = {
+      firstName: telegramUser.first_name,
+      isBot: telegramUser.is_bot,
+      id: telegramUser.id,
+      username: telegramUser.username,
+    };
+    if (user) {
+      // update
+      updatedUser = new User({
+        ...user,
+        ...adaptedUser,
+        appJoins: user.appJoins,
+      });
+      await this.userModel
+        .updateOne({ id: telegramUser.id }, { $set: updatedUser })
+        .exec();
+    } else {
+      // add
+      updatedUser = new User(adaptedUser);
+      await this.userModel.create(updatedUser);
+    }
+    ctx.session.user = updatedUser;
+  }
 
   async addOrUpdateUser({ phone, name }) {
     // this context is loosing after babel compile, strange bug,

@@ -2,12 +2,13 @@ import { Module } from '@nestjs/common';
 import { TelegrafModule, TelegrafModuleOptions } from 'nestjs-telegraf';
 import { ClientModule } from 'src/client/client.module';
 import { BasicModule } from './basic/basic.module';
+import { UserModule } from './../user/user.module';
 import { ClientService } from 'src/client/client.service';
 import { session } from 'telegraf'; // TODO: rewise
 @Module({
   imports: [
     TelegrafModule.forRootAsync({
-      imports: [ClientModule],
+      imports: [ClientModule, UserModule],
       useFactory: async (
         clientService: ClientService,
       ): Promise<TelegrafModuleOptions> => {
@@ -15,7 +16,6 @@ import { session } from 'telegraf'; // TODO: rewise
         return {
           token: client.botToken,
           botName: client.botName,
-          // include: [BasicModule],
           middlewares: [session()],
         };
       },

@@ -6,6 +6,7 @@ import { ClientDocument } from 'src/schemas/client.schema';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectBot } from 'nestjs-telegraf';
 import { BotContext } from './common/bot.context';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class BasicService implements OnModuleInit {
@@ -16,10 +17,12 @@ export class BasicService implements OnModuleInit {
     @InjectBot(process.env.BOT_NAME) private bot: Telegraf<BotContext>,
     private clientService: ClientService,
     private textService: TextService,
+    private userService: UserService,
   ) {}
 
   async onModuleInit() {
     await this.initLocales();
+    await this.checkUser();
     await this.loadProducts();
     this.extendContext(this.client);
   }
@@ -38,8 +41,17 @@ export class BasicService implements OnModuleInit {
     return Date.now() - REFRESH_TIMEOUT > lastUpdate;
   }
 
+  async checkUser() {
+    this.bot.use(async (ctx: BotContext, next) => {
+      if (ctx.message) {
+        await this.userService.addOrUpdateUserMiddleware(ctx);
+      }
+      return next();
+    });
+  }
+
   async loadProducts() {
-    this.bot.use(async (ctx: any, next) => {
+    this.bot.use(async (ctx: BotContext, next) => {
       if (!ctx.session) {
         ctx.session = {};
       }
