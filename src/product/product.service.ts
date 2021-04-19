@@ -22,6 +22,11 @@ export class ProductService {
     return products;
   }
 
+  async getProduct(id: string, clientId: string) {
+    const products = await this.getProducts({ clientId });
+    return products.find((v) => v.id === id);
+  }
+
   async createProduct(createProductDto: CreateProductDto) {
     const product = new Product(createProductDto);
     return this.clientModel

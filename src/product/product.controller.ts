@@ -7,6 +7,9 @@ import {
   Post,
   UseGuards,
   ValidationPipe,
+  Headers,
+  Logger,
+  BadRequestException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -18,6 +21,8 @@ import { UpdateProductAvailabilityDto } from './dto/update-product-availability.
 
 @Controller('product')
 export class ProductController {
+  private readonly logger = new Logger(ProductController.name);
+
   constructor(private productService: ProductService) {}
   @Get('/all')
   getProducts(@Query(ValidationPipe) getProductsDto: GetProductsDto) {
@@ -25,7 +30,13 @@ export class ProductController {
   }
 
   @Post('/available')
-  updateProductAvailability(@Body() body: UpdateProductAvailabilityDto) {
+  updateProductAvailability(
+    @Body(ValidationPipe) body: UpdateProductAvailabilityDto,
+  ) {
+    this.logger.log(
+      `updateProductAvailability ${body.id}`,
+      ProductController.name,
+    );
     return this.productService.updateProductAvailability(body);
   }
 
@@ -36,6 +47,24 @@ export class ProductController {
     createOrUpdateProductDto: CreateProductDto | UpdateProductDto,
   ) {
     return this.productService.createProduct(createOrUpdateProductDto);
+  }
+
+  @Get('/:id')
+  getProduct(
+    @Param('id') id: string,
+    @Query('clientId') clientId: string,
+    @Headers('X-Auth-Client') clientAuthToken: string,
+  ) {
+    if (!clientId && !clientAuthToken) {
+      throw new BadRequestException();
+    }
+    this.logger.log(
+      `get product ${id} by ${
+        clientId ? 'clientId' : 'X-Auth-Client'
+      } X-Auth-Client`,
+      ProductController.name,
+    );
+    return this.productService.getProduct(id, clientId || clientAuthToken);
   }
 
   @UseGuards(AuthGuard('jwt'))
