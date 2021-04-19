@@ -9,6 +9,7 @@ import { TelebotModule } from './telebot/telebot.module';
 import { TextModule } from './text/text.module';
 import { EventsModule } from './events/events.module';
 import { ProductModule } from './product/product.module';
+import { PagesModule } from './pages/pages.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -23,6 +24,7 @@ import { ProductModule } from './product/product.module';
     TextModule,
     EventsModule,
     ProductModule,
+    PagesModule,
   ],
 })
 export class AppModule {}
