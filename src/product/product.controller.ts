@@ -50,17 +50,40 @@ export class ProductController {
     return this.productService.createProduct(createOrUpdateProductDto);
   }
 
-  @Get('/:id')
+  //TODO: review get product to add filter product dto
+  @Get('/:slug')
   getProduct(
-    @Param('id') id: string,
+    @Param('slug') slug: string,
     @Query('clientId') clientId: string,
     @Headers('X-Auth-Client') clientAuthToken: string,
   ) {
-    if (!clientId && !clientAuthToken) {
+    if ((!clientId && !clientAuthToken) || !slug) {
       throw new BadRequestException();
     }
     this.logger.log(
-      `get product ${id} by ${
+      `get product slug ${slug} by ${
+        clientId ? 'clientId' : 'X-Auth-Client'
+      } X-Auth-Client`,
+      ProductController.name,
+    );
+    return this.productService.getProduct(
+      slug,
+      clientId || clientAuthToken,
+      'slug',
+    );
+  }
+
+  @Get()
+  getProductById(
+    @Query('id') id: string,
+    @Query('clientId') clientId: string,
+    @Headers('X-Auth-Client') clientAuthToken: string,
+  ) {
+    if ((!clientId && !clientAuthToken) || !id) {
+      throw new BadRequestException();
+    }
+    this.logger.log(
+      `get product by params ${id} by ${
         clientId ? 'clientId' : 'X-Auth-Client'
       } X-Auth-Client`,
       ProductController.name,

@@ -22,9 +22,9 @@ export class ProductService {
     return products;
   }
 
-  async getProduct(id: string, clientId: string) {
+  async getProduct(value: string, clientId: string, param = 'id') {
     const products = await this.getProducts({ clientId });
-    return products.find((v) => v.id === id);
+    return products.find((v) => v[param] === value);
   }
 
   async createProduct(createProductDto: CreateProductDto) {
