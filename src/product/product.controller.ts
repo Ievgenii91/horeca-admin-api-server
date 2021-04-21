@@ -46,6 +46,7 @@ export class ProductController {
     @Body(ValidationPipe)
     createOrUpdateProductDto: CreateProductDto | UpdateProductDto,
   ) {
+    this.logger.log(`create product for ${createOrUpdateProductDto.clientId}`);
     return this.productService.createProduct(createOrUpdateProductDto);
   }
 
@@ -74,6 +75,7 @@ export class ProductController {
     @Body(ValidationPipe)
     createOrUpdateProductDto: CreateProductDto | UpdateProductDto,
   ) {
+    this.logger.log(`update product ${id}`, ProductController.name);
     createOrUpdateProductDto.id = id;
     return this.productService.updateProduct(
       createOrUpdateProductDto as UpdateProductDto,
@@ -83,6 +85,10 @@ export class ProductController {
   @UseGuards(AuthGuard('jwt'))
   @Post('/delete')
   deleteProduct(@Body(ValidationPipe) deleteProductDto: DeleteProductDto) {
+    this.logger.log(
+      `delete product ${deleteProductDto.id}`,
+      ProductController.name,
+    );
     return this.productService.deleteProduct(deleteProductDto);
   }
 }

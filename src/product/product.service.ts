@@ -43,27 +43,30 @@ export class ProductService {
       .exec();
   }
 
-  async updateProduct(createProductDto: UpdateProductDto) {
+  async updateProduct(updateProductDto: UpdateProductDto) {
     return this.clientModel
       .updateOne(
         {
-          _id: createProductDto.clientId,
-          'products.id': createProductDto.id,
+          _id: updateProductDto.clientId,
+          'products.id': updateProductDto.id,
         },
         {
           $set: {
-            'products.$.name': createProductDto.name,
-            'products.$.description': createProductDto.description,
-            'products.$.fancyName': createProductDto.fancyName,
-            'products.$.category': createProductDto.category,
-            'products.$.subCategory': createProductDto.subCategory,
-            'products.$.additionalText': createProductDto.additionalText,
-            'products.$.available': createProductDto.available,
-            'products.$.price': createProductDto.price,
+            'products.$.name': updateProductDto.name,
+            'products.$.description': updateProductDto.description,
+            'products.$.fancyName': updateProductDto.fancyName,
+            'products.$.category': updateProductDto.category,
+            'products.$.subCategory': updateProductDto.subCategory,
+            'products.$.additionalText': updateProductDto.additionalText,
+            'products.$.available': updateProductDto.available,
+            'products.$.price': updateProductDto.price,
             'products.$.editMode': false,
-            'products.$.type': createProductDto.type,
-            'products.$.crossSales': createProductDto.crossSales,
-            'products.$.usedForCrossSales': createProductDto.usedForCrossSales,
+            'products.$.type': updateProductDto.type,
+            'products.$.crossSales': updateProductDto.crossSales,
+            'products.$.slug': updateProductDto.slug,
+            'products.$.path': updateProductDto.path,
+            'products.$.images': updateProductDto.images,
+            'products.$.usedForCrossSales': updateProductDto.usedForCrossSales,
           },
         },
       )
