@@ -18,5 +18,6 @@ import { WishlistController } from './wishlist/wishlist.controller';
   ],
   providers: [ProductService],
   controllers: [ProductController, WishlistController],
+  exports: [ProductService],
 })
 export class ProductModule {}

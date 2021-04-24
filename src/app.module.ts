@@ -10,6 +10,7 @@ import { TextModule } from './text/text.module';
 import { EventsModule } from './events/events.module';
 import { ProductModule } from './product/product.module';
 import { PagesModule } from './pages/pages.module';
+import { CartModule } from './cart/cart.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -25,6 +26,7 @@ import { PagesModule } from './pages/pages.module';
     EventsModule,
     ProductModule,
     PagesModule,
+    CartModule,
   ],
 })
 export class AppModule {}
