@@ -17,7 +17,6 @@ export class CartService {
     const product = await this.productService.getProduct(
       createCartDto.productId,
       createCartDto.clientId,
-      'id',
     );
     const cartItem = new this.cartModel({
       lineItems: [product],
@@ -32,7 +31,7 @@ export class CartService {
   }
 
   findAll(id: string) {
-    return this.cartModel.findById(id).exec();
+    return this.cartModel.findOne({ id }).exec();
   }
 
   findOne(id: string) {

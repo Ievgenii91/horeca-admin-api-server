@@ -24,8 +24,10 @@ export class CartController {
     @Res({ passthrough: true }) response,
   ): Promise<Cart> {
     const cart = await this.cartService.create(createCartDto);
-    console.log(cart.id, cart.get('_id'), '@@@');
-    response.cookie('bc_cartId', cart.get('_id'));
+    response.cookie('bc_cartId', cart.get('_id'), {
+      expires: 365,
+      httpOnly: true,
+    });
     return cart;
   }
 
