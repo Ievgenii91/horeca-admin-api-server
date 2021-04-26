@@ -17,14 +17,14 @@ export class CartService {
     const product = await this.productService.getProduct(
       createCartDto.productId,
       createCartDto.clientId,
+      'id',
     );
     const cartItem = new this.cartModel({
       lineItems: [product],
-      createdAt: new Date().getUTCDate(),
+      createdAt: new Date().toISOString(),
       currency: {
         code: 'UAH',
       },
-      id: new Date().getTime(),
     });
     cartItem.save();
     return cartItem;
@@ -44,5 +44,26 @@ export class CartService {
 
   remove(id: string) {
     return this.cartModel.deleteOne({ id }).exec();
+  }
+
+  getCookieExpirationDate() {
+    const date = new Date();
+    if (date.getMonth() === 12) {
+      date.setMonth(1);
+      date.setFullYear(date.getFullYear() + 1);
+    } else {
+      date.setMonth(date.getMonth() + 1);
+    }
+    return date; //.toISOString();
+  }
+
+  setCartInCookie(response, cart) {
+    const expires = this.getCookieExpirationDate();
+    response.cookie('bc_cartId', decodeURI(cart._id), {
+      httpOnly: false,
+      sameSite: 'None',
+      secure: true,
+      expires: expires,
+    });
   }
 }

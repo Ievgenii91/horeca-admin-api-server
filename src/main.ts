@@ -10,6 +10,8 @@ import { IoAdapter } from '@nestjs/platform-socket.io';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
+  app.use(cookieParser());
+
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -18,13 +20,14 @@ async function bootstrap() {
 
   app.useWebSocketAdapter(new IoAdapter(app));
 
-  app.use(cookieParser());
-
   app.setGlobalPrefix('api');
 
   app.useStaticAssets(join(__dirname, '..', 'dist'));
 
-  app.enableCors();
+  app.enableCors({
+    origin: ['http://localhost:3000', 'https://horeca-admin.herokuapp.com'],
+    credentials: true,
+  });
 
   app.use(helmet());
 

@@ -8,6 +8,7 @@ import {
   Delete,
   Res,
   Req,
+  Headers,
 } from '@nestjs/common';
 import { Cart } from 'src/schemas/cart.schema';
 import { CartService } from './cart.service';
@@ -22,12 +23,13 @@ export class CartController {
   async create(
     @Body() createCartDto: CreateCartDto,
     @Res({ passthrough: true }) response,
+    @Headers('X-Auth-Client') clientId: string,
   ): Promise<Cart> {
+    if (!createCartDto.clientId) {
+      createCartDto.clientId = clientId;
+    }
     const cart = await this.cartService.create(createCartDto);
-    response.cookie('bc_cartId', cart.get('_id'), {
-      expires: 365,
-      httpOnly: true,
-    });
+    this.cartService.setCartInCookie(response, cart);
     return cart;
   }
 

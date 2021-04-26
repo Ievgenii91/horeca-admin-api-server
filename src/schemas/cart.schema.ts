@@ -67,8 +67,6 @@ export type Discount = {
 };
 @Schema()
 export class Cart {
-  @Prop()
-  id: string;
   // ID of the customer to which the cart belongs.
   customerId?: string;
   // The email assigned to this cart
