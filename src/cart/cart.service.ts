@@ -31,7 +31,7 @@ export class CartService {
   }
 
   findAll(id: string) {
-    return this.cartModel.findOne({ id }).exec();
+    return this.cartModel.findById(id).exec();
   }
 
   findOne(id: string) {
