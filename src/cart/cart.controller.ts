@@ -34,9 +34,12 @@ export class CartController {
   }
 
   @Get()
-  find(@Req() request) {
+  async find(@Req() request) {
     const cartId = request.cookies['bc_cartId'];
-    return this.cartService.findAll(cartId);
+    const cart = await this.cartService.findAll(cartId);
+    return {
+      data: cart,
+    };
   }
 
   @Get(':id')

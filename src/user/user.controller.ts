@@ -11,6 +11,8 @@ export class UserController {
 
   @Get('customers')
   getCustomers() {
-    return [];
+    return {
+      data: [],
+    };
   }
 }
