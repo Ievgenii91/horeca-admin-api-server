@@ -22,7 +22,11 @@ export class ProductService {
     return products;
   }
 
-  async getProduct(value: string, clientId: string, param = 'id') {
+  async getProduct(
+    value: string,
+    clientId: string,
+    param = 'id',
+  ): Promise<Product> {
     const products = await this.getProducts({ clientId });
     return products.find((v) => v[param] === value);
   }

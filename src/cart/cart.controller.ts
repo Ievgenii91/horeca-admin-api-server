@@ -7,9 +7,10 @@ import {
   Param,
   Delete,
   Res,
-  Req,
   Headers,
+  Put,
 } from '@nestjs/common';
+import { CartId } from 'src/decorators/cart-cookie.decorator';
 import { Cart } from 'src/schemas/cart.schema';
 import { CartService } from './cart.service';
 import { CreateCartDto } from './dto/create-cart.dto';
@@ -20,23 +21,36 @@ export class CartController {
   constructor(private readonly cartService: CartService) {}
 
   @Post()
-  async create(
+  async add(
     @Body() createCartDto: CreateCartDto,
     @Res({ passthrough: true }) response,
+    @CartId() cartId: string,
     @Headers('X-Auth-Client') clientId: string,
-  ): Promise<Cart> {
+  ): Promise<{ data: Cart }> {
     if (!createCartDto.clientId) {
       createCartDto.clientId = clientId;
     }
-    const cart = await this.cartService.create(createCartDto);
-    this.cartService.setCartInCookie(response, cart);
-    return cart;
+
+    const data = await this.cartService.create(createCartDto, cartId);
+    this.cartService.setCartInCookie(response, data);
+    return { data };
+  }
+
+  @Put()
+  async update(
+    @Body() updateCartDto: UpdateCartDto,
+    @CartId() cartId: string,
+    @Headers('X-Auth-Client') clientId: string,
+  ) {
+    const data = await this.cartService.update(updateCartDto, cartId, clientId);
+    return {
+      data,
+    };
   }
 
   @Get()
-  async find(@Req() request) {
-    const cartId = request.cookies['bc_cartId'];
-    const cart = await this.cartService.findAll(cartId);
+  async find(@CartId() cartId: string) {
+    const cart = await this.cartService.findById(cartId);
     return {
       data: cart,
     };
@@ -47,13 +61,8 @@ export class CartController {
     return this.cartService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCartDto: UpdateCartDto) {
-    return this.cartService.update(+id, updateCartDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.cartService.remove(id);
+  @Delete()
+  remove(@Body('itemId') id: string, @CartId() cartId: string) {
+    return this.cartService.remove(cartId, id);
   }
 }
