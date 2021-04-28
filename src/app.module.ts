@@ -11,6 +11,7 @@ import { EventsModule } from './events/events.module';
 import { ProductModule } from './product/product.module';
 import { PagesModule } from './pages/pages.module';
 import { CartModule } from './cart/cart.module';
+import { TransformInterceptor } from './common/response-transform.interceptor';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -28,5 +29,6 @@ import { CartModule } from './cart/cart.module';
     PagesModule,
     CartModule,
   ],
+  providers: [TransformInterceptor],
 })
 export class AppModule {}

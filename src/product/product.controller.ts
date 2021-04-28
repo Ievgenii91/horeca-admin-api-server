@@ -10,6 +10,7 @@ import {
   Headers,
   Logger,
   BadRequestException,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -18,7 +19,9 @@ import { GetProductsDto } from './dto/get-products.dto';
 import { ProductService } from './product.service';
 import { DeleteProductDto } from './dto/delete-product.dto';
 import { UpdateProductAvailabilityDto } from './dto/update-product-availability.dto';
+import { TransformInterceptor } from 'src/common/response-transform.interceptor';
 
+@UseInterceptors(TransformInterceptor)
 @Controller('product')
 export class ProductController {
   private readonly logger = new Logger(ProductController.name);

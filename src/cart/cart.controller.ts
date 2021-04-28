@@ -3,19 +3,21 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Res,
   Headers,
   Put,
+  UseInterceptors,
 } from '@nestjs/common';
+import { TransformInterceptor } from 'src/common/response-transform.interceptor';
 import { CartId } from 'src/decorators/cart-cookie.decorator';
 import { Cart } from 'src/schemas/cart.schema';
 import { CartService } from './cart.service';
 import { CreateCartDto } from './dto/create-cart.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
 
+@UseInterceptors(TransformInterceptor)
 @Controller('cart')
 export class CartController {
   constructor(private readonly cartService: CartService) {}
@@ -26,38 +28,32 @@ export class CartController {
     @Res({ passthrough: true }) response,
     @CartId() cartId: string,
     @Headers('X-Auth-Client') clientId: string,
-  ): Promise<{ data: Cart }> {
+  ): Promise<Cart> {
     if (!createCartDto.clientId) {
       createCartDto.clientId = clientId;
     }
 
     const data = await this.cartService.create(createCartDto, cartId);
     this.cartService.setCartInCookie(response, data);
-    return { data };
+    return data;
   }
 
   @Put()
-  async update(
+  update(
     @Body() updateCartDto: UpdateCartDto,
     @CartId() cartId: string,
     @Headers('X-Auth-Client') clientId: string,
-  ) {
-    const data = await this.cartService.update(updateCartDto, cartId, clientId);
-    return {
-      data,
-    };
+  ): Promise<Cart> {
+    return this.cartService.update(updateCartDto, cartId, clientId);
   }
 
   @Get()
-  async find(@CartId() cartId: string) {
-    const cart = await this.cartService.findById(cartId);
-    return {
-      data: cart,
-    };
+  find(@CartId() cartId: string): Promise<Cart> {
+    return this.cartService.findById(cartId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string): Promise<Cart> {
     return this.cartService.findOne(id);
   }
 

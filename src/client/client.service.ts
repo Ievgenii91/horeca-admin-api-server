@@ -11,6 +11,19 @@ export class ClientService {
     @InjectModel(Client.name) private clientModel: Model<ClientDocument>,
   ) {}
 
+  async getClientByUser(email: string): Promise<Client[]> {
+    return this.clientModel
+      .find({
+        $or: [{ owner: email }, { users: { $in: [email] } }],
+      })
+      .select({
+        paymentToken: 0,
+        botToken: 0,
+        botName: 0,
+      })
+      .exec();
+  }
+
   async getClient(filter: FilterQuery<any>): Promise<Client> {
     return this.clientModel.findOne(filter).exec();
   }

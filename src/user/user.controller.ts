@@ -1,6 +1,8 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, UseInterceptors } from '@nestjs/common';
+import { TransformInterceptor } from 'src/common/response-transform.interceptor';
 import { UserService } from './user.service';
 
+@UseInterceptors(TransformInterceptor)
 @Controller()
 export class UserController {
   constructor(private userModel: UserService) {}
@@ -11,8 +13,6 @@ export class UserController {
 
   @Get('customers')
   getCustomers() {
-    return {
-      data: [],
-    };
+    return [];
   }
 }
