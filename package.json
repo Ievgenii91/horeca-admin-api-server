@@ -1,12 +1,12 @@
 {
-  "name": "horeca-api-server",
+  "name": "nestbn",
   "version": "0.1.0",
   "description": "BN api service",
   "author": "Ievgenii Butyrin",
   "private": true,
   "license": "UNLICENSED",
   "engines": {
-    "node": "12.18.2"
+    "node": "14.x"
   },
   "scripts": {
     "prebuild": "rimraf dist",
@@ -27,6 +27,7 @@
     "@nestjs/common": "^7.6.15",
     "@nestjs/config": "^0.6.3",
     "@nestjs/core": "^7.6.15",
+    "@nestjs/mapped-types": "*",
     "@nestjs/mongoose": "^7.2.4",
     "@nestjs/passport": "^7.1.5",
     "@nestjs/platform-express": "^7.6.15",
@@ -47,8 +48,7 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.6",
-    "telegraf": "^4.3.0",
-    "telegraf-i18n": "^6.6.0"
+    "telegraf": "^4.3.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.6.0",

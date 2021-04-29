@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { ImageSchema, Image } from './image.schema';
 
 export type ProductDocument = Product & Document;
 
@@ -11,6 +12,8 @@ export class Product {
   name: string;
   @Prop()
   description: string;
+  @Prop()
+  descriptionHTML: string;
   @Prop()
   count: number;
   @Prop()
@@ -43,6 +46,12 @@ export class Product {
   category: string;
   @Prop()
   subCategory: string;
+  @Prop({ type: [ImageSchema] })
+  images: Image[];
+  @Prop()
+  slug: string;
+  @Prop()
+  path: string;
 
   constructor(data: Partial<Product> = {}) {
     this.name = data.name || null;
@@ -63,11 +72,18 @@ export class Product {
     this.fancyName = data.fancyName;
     this.category = data.category;
     this.subCategory = data.subCategory;
+    this.images = data.images || [];
+    this.slug = data.slug || '';
+    this.path = data.path || '';
   }
 
   generateId(): string {
     return (
-      this.name.toLowerCase().split(' ').join('_') +
+      this.name
+        .replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '')
+        .toLowerCase()
+        .split(' ')
+        .join('_') +
       '_' +
       new Date().getTime().toString()
     );

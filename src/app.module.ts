@@ -9,6 +9,9 @@ import { TelebotModule } from './telebot/telebot.module';
 import { TextModule } from './text/text.module';
 import { EventsModule } from './events/events.module';
 import { ProductModule } from './product/product.module';
+import { PagesModule } from './pages/pages.module';
+import { CartModule } from './cart/cart.module';
+import { TransformInterceptor } from './common/response-transform.interceptor';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -23,6 +26,9 @@ import { ProductModule } from './product/product.module';
     TextModule,
     EventsModule,
     ProductModule,
+    PagesModule,
+    CartModule,
   ],
+  providers: [TransformInterceptor],
 })
 export class AppModule {}
