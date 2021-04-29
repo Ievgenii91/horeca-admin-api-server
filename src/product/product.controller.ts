@@ -7,9 +7,7 @@ import {
   Post,
   UseGuards,
   ValidationPipe,
-  Headers,
   Logger,
-  BadRequestException,
   UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
@@ -20,6 +18,8 @@ import { ProductService } from './product.service';
 import { DeleteProductDto } from './dto/delete-product.dto';
 import { UpdateProductAvailabilityDto } from './dto/update-product-availability.dto';
 import { TransformInterceptor } from 'src/common/response-transform.interceptor';
+import { ClientId } from 'src/decorators/client-id.decorator';
+import { RequiredValidationPipe } from 'src/common/required-validation.pipe';
 
 @UseInterceptors(TransformInterceptor)
 @Controller('product')
@@ -56,42 +56,36 @@ export class ProductController {
   //TODO: review get product to add filter product dto
   @Get('/:slug')
   getProduct(
-    @Param('slug') slug: string,
-    @Query('clientId') clientId: string,
-    @Headers('X-Auth-Client') clientAuthToken: string,
+    @Param('slug', RequiredValidationPipe) slug: string,
+    @ClientId() clientId: string,
   ) {
-    if ((!clientId && !clientAuthToken) || !slug) {
-      throw new BadRequestException();
-    }
     this.logger.log(
-      `get product slug ${slug} by ${
-        clientId ? 'clientId' : 'X-Auth-Client'
-      } X-Auth-Client`,
+      `get product slug ${slug} by ${clientId} clientId`,
       ProductController.name,
     );
-    return this.productService.getProduct(
-      slug,
-      clientId || clientAuthToken,
-      'slug',
-    );
+    return this.productService.getProduct(slug, clientId, 'slug');
   }
 
   @Get()
   getProductById(
-    @Query('id') id: string,
-    @Query('clientId') clientId: string,
-    @Headers('X-Auth-Client') clientAuthToken: string,
+    @Query('id', RequiredValidationPipe) id: string,
+    @ClientId() clientId: string,
   ) {
-    if ((!clientId && !clientAuthToken) || !id) {
-      throw new BadRequestException();
-    }
     this.logger.log(
-      `get product by params ${id} by ${
-        clientId ? 'clientId' : 'X-Auth-Client'
-      } X-Auth-Client`,
+      `get product by params ${id} by ${clientId} clientId`,
       ProductController.name,
     );
-    return this.productService.getProduct(id, clientId || clientAuthToken);
+    return this.productService.getProduct(id, clientId);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('/delete')
+  deleteProduct(@Body(ValidationPipe) deleteProductDto: DeleteProductDto) {
+    this.logger.log(
+      `delete product ${deleteProductDto.id}`,
+      ProductController.name,
+    );
+    return this.productService.deleteProduct(deleteProductDto);
   }
 
   @UseGuards(AuthGuard('jwt'))
@@ -106,15 +100,5 @@ export class ProductController {
     return this.productService.updateProduct(
       createOrUpdateProductDto as UpdateProductDto,
     );
-  }
-
-  @UseGuards(AuthGuard('jwt'))
-  @Post('/delete')
-  deleteProduct(@Body(ValidationPipe) deleteProductDto: DeleteProductDto) {
-    this.logger.log(
-      `delete product ${deleteProductDto.id}`,
-      ProductController.name,
-    );
-    return this.productService.deleteProduct(deleteProductDto);
   }
 }

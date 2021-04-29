@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, QueryOptions } from 'mongoose';
 import { Client, ClientDocument } from 'src/schemas/client.schema';
 import { Product } from 'src/schemas/product.schema';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -9,6 +9,10 @@ import { GetProductsDto } from './dto/get-products.dto';
 import { UpdateProductAvailabilityDto } from './dto/update-product-availability.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 
+const options: Partial<QueryOptions> = {
+  new: true,
+  useFindAndModify: false,
+};
 @Injectable()
 export class ProductService {
   constructor(
@@ -34,7 +38,7 @@ export class ProductService {
   async createProduct(createProductDto: CreateProductDto) {
     const product = new Product(createProductDto);
     return this.clientModel
-      .updateOne(
+      .findOneAndUpdate(
         {
           _id: createProductDto.clientId,
         },
@@ -43,13 +47,14 @@ export class ProductService {
             products: product,
           },
         },
+        options,
       )
       .exec();
   }
 
   async updateProduct(updateProductDto: UpdateProductDto) {
     return this.clientModel
-      .updateOne(
+      .findOneAndUpdate(
         {
           _id: updateProductDto.clientId,
           'products.id': updateProductDto.id,
@@ -73,6 +78,7 @@ export class ProductService {
             'products.$.usedForCrossSales': updateProductDto.usedForCrossSales,
           },
         },
+        options,
       )
       .exec();
   }
@@ -83,7 +89,7 @@ export class ProductService {
     const { clientId, id, available } = updateProductAvailabilityDto;
 
     return this.clientModel
-      .updateOne(
+      .findOneAndUpdate(
         {
           _id: clientId,
           'products.id': id,
@@ -93,6 +99,7 @@ export class ProductService {
             'products.$.available': available,
           },
         },
+        options,
       )
       .exec();
   }
@@ -100,7 +107,7 @@ export class ProductService {
   async deleteProduct(deleteProductDto: DeleteProductDto) {
     const { id, clientId } = deleteProductDto;
     return this.clientModel
-      .updateOne(
+      .findOneAndUpdate(
         {
           _id: clientId,
         },
@@ -111,6 +118,7 @@ export class ProductService {
             },
           },
         },
+        options,
       )
       .exec();
   }

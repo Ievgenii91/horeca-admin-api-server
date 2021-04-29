@@ -1,12 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, QueryOptions } from 'mongoose';
 import { Cart, CartDocument, LineItem } from 'src/schemas/cart.schema';
 import { CreateCartDto } from './dto/create-cart.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
 import { ProductService } from './../product/product.service';
 import { Product } from 'src/schemas/product.schema';
 
+const options: Partial<QueryOptions> = {
+  new: true,
+  useFindAndModify: false,
+};
 @Injectable()
 export class CartService {
   constructor(
@@ -37,11 +41,12 @@ export class CartService {
 
   async create(
     createCartDto: CreateCartDto,
+    clientId: string,
     cartId: string,
   ): Promise<CartDocument> {
     const product = await this.productService.getProduct(
       createCartDto.productId,
-      createCartDto.clientId,
+      clientId,
       'id',
     );
     const lineItem = this.productToCartLineItem(product);
@@ -56,9 +61,7 @@ export class CartService {
               lineItems: lineItem,
             },
           },
-          {
-            new: true,
-          },
+          options,
         )
         .exec();
       return cart;
@@ -91,9 +94,7 @@ export class CartService {
             lineItems: lineItem,
           },
         },
-        {
-          new: true,
-        },
+        options,
       )
       .exec();
   }
@@ -122,9 +123,7 @@ export class CartService {
               },
             },
           },
-          {
-            new: true,
-          },
+          options,
         )
         .exec();
     }

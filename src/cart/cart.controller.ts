@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { TransformInterceptor } from 'src/common/response-transform.interceptor';
 import { CartId } from 'src/decorators/cart-cookie.decorator';
+import { ClientId } from 'src/decorators/client-id.decorator';
 import { Cart } from 'src/schemas/cart.schema';
 import { CartService } from './cart.service';
 import { CreateCartDto } from './dto/create-cart.dto';
@@ -27,13 +28,9 @@ export class CartController {
     @Body() createCartDto: CreateCartDto,
     @Res({ passthrough: true }) response,
     @CartId() cartId: string,
-    @Headers('X-Auth-Client') clientId: string,
+    @ClientId() clientId: string,
   ): Promise<Cart> {
-    if (!createCartDto.clientId) {
-      createCartDto.clientId = clientId;
-    }
-
-    const data = await this.cartService.create(createCartDto, cartId);
+    const data = await this.cartService.create(createCartDto, clientId, cartId);
     this.cartService.setCartInCookie(response, data);
     return data;
   }
@@ -42,7 +39,7 @@ export class CartController {
   update(
     @Body() updateCartDto: UpdateCartDto,
     @CartId() cartId: string,
-    @Headers('X-Auth-Client') clientId: string,
+    @ClientId() clientId: string,
   ): Promise<Cart> {
     return this.cartService.update(updateCartDto, cartId, clientId);
   }
