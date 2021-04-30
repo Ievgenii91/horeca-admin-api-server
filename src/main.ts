@@ -25,7 +25,11 @@ async function bootstrap() {
   app.useStaticAssets(join(__dirname, '..', 'dist'));
 
   app.enableCors({
-    origin: ['http://localhost:3000', 'https://horeca-admin.herokuapp.com'],
+    origin: [
+      'http://localhost:3000',
+      'https://horeca-admin.herokuapp.com',
+      /vercel.app/,
+    ],
     credentials: true,
   });
 
