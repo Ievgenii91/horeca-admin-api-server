@@ -1,10 +1,10 @@
 {
   "name": "nestbn",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "BN api service",
   "author": "Ievgenii Butyrin",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "engines": {
     "node": "14.x"
   },
@@ -48,7 +48,8 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.6",
-    "telegraf": "^4.3.0"
+    "telegraf": "^4.3.0",
+    "telegraf-i18n": "^6.6.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.6.0",

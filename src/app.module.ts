@@ -22,7 +22,7 @@ import { TransformInterceptor } from './common/response-transform.interceptor';
     ClientModule,
     OrderModule,
     UserModule,
-    TelebotModule,
+    // TelebotModule,
     TextModule,
     EventsModule,
     ProductModule,
