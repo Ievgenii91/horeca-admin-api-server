@@ -6,10 +6,10 @@ import {
   Param,
   Delete,
   Res,
-  Headers,
   Put,
   UseInterceptors,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { TransformInterceptor } from 'src/common/response-transform.interceptor';
 import { CartId } from 'src/decorators/cart-cookie.decorator';
 import { ClientId } from 'src/decorators/client-id.decorator';
@@ -26,12 +26,12 @@ export class CartController {
   @Post()
   async add(
     @Body() createCartDto: CreateCartDto,
-    @Res({ passthrough: true }) response,
+    @Res({ passthrough: true }) response: Response,
     @CartId() cartId: string,
     @ClientId() clientId: string,
   ): Promise<Cart> {
     const data = await this.cartService.create(createCartDto, clientId, cartId);
-    this.cartService.setCartInCookie(response, data);
+    this.cartService.setCartInCookie(response, data._id);
     return data;
   }
 
@@ -55,7 +55,15 @@ export class CartController {
   }
 
   @Delete()
-  remove(@Body('itemId') id: string, @CartId() cartId: string) {
-    return this.cartService.remove(cartId, id);
+  async remove(
+    @Body('itemId') id: string,
+    @CartId() cartId: string,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<Cart> | null {
+    const cart = await this.cartService.remove(cartId, id);
+    if (!cart) {
+      this.cartService.clearCookie(res);
+    }
+    return cart;
   }
 }
