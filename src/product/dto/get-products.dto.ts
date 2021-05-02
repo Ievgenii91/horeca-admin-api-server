@@ -1,6 +1,8 @@
-import { IsNotEmpty } from 'class-validator';
-
 export class GetProductsDto {
-  @IsNotEmpty()
   clientId: string;
+  category: string;
+  search: string;
+  brand: string;
+  sort: string;
+  sortByPrice: string;
 }

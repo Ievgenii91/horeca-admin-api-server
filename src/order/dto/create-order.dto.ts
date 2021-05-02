@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsPhoneNumber } from 'class-validator';
 import { Product } from 'src/schemas/product.schema';
 
 export enum RequestInitiator {
@@ -16,6 +16,7 @@ export class CreateOrderDto {
   @IsNotEmpty()
   initiator: RequestInitiator;
 
+  @IsPhoneNumber('UA')
   phone: string;
 
   @IsNotEmpty()

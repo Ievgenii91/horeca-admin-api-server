@@ -80,7 +80,9 @@ export class Cart {
   @Prop({ type: Object })
   currency: { code: string };
   // Specifies if taxes are included in the line items.
+  @Prop()
   taxesIncluded: boolean;
+
   @Prop()
   lineItems: LineItem[];
   // The sum of all the prices of all the items in the cart.
@@ -95,7 +97,11 @@ export class Cart {
   // Duties, taxes and discounts included.
   totalPrice: number;
   // Discounts that have been applied on the cart.
+  @Prop()
   discounts?: Discount[];
+
+  @Prop({ type: String })
+  test: any;
 }
 
 export const CartSchema = SchemaFactory.createForClass(Cart);

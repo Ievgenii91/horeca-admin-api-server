@@ -63,6 +63,9 @@ export class CartService {
     const totalPrice = lineItem.variant.price;
     if (cartId) {
       const cart = await this.cartModel.findById(cartId);
+      if (!cart) {
+        return this.createCartItem(lineItem);
+      }
       const item = cart.lineItems.find((v) => v.id === createCartDto.productId);
       if (!item) {
         return this.cartModel
@@ -103,19 +106,24 @@ export class CartService {
           .exec();
       }
     } else {
-      const cartItem = new this.cartModel({
-        lineItems: [lineItem],
-        createdAt: new Date().toISOString(),
-        currency: {
-          code: 'UAH',
-        },
-        lineItemsSubtotalPrice: totalPrice,
-        subtotalPrice: totalPrice,
-        totalPrice: totalPrice,
-      });
-      cartItem.save();
-      return cartItem;
+      return this.createCartItem(lineItem);
     }
+  }
+
+  async createCartItem(lineItem: LineItem): Promise<CartDocument> {
+    const totalPrice = lineItem.variant.price;
+    const cartItem = new this.cartModel({
+      lineItems: [lineItem],
+      createdAt: new Date().toISOString(),
+      currency: {
+        code: 'UAH',
+      },
+      lineItemsSubtotalPrice: totalPrice,
+      subtotalPrice: totalPrice,
+      totalPrice: totalPrice,
+    });
+    await cartItem.save();
+    return cartItem;
   }
 
   async update(
@@ -167,10 +175,21 @@ export class CartService {
   }
 
   async remove(cartId: string, id: string): Promise<Cart> | null {
+    // TODO: remove duplicate req, using additional values from FE or aggregation.
+    const data = await this.cartModel.findById(cartId);
+    const productToDelete = data?.lineItems.find((v) => v.id === id);
+    const price =
+      productToDelete?.variant.price * productToDelete.quantity || 0;
+    // eof
     const cart = await this.cartModel
       .findOneAndUpdate(
         { _id: cartId },
         {
+          $inc: {
+            lineItemsSubtotalPrice: -price,
+            subtotalPrice: -price,
+            totalPrice: -price,
+          },
           $pull: {
             lineItems: {
               id,

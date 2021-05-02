@@ -13,13 +13,13 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { CreateProductDto } from './dto/create-product.dto';
-import { GetProductsDto } from './dto/get-products.dto';
 import { ProductService } from './product.service';
 import { DeleteProductDto } from './dto/delete-product.dto';
 import { UpdateProductAvailabilityDto } from './dto/update-product-availability.dto';
 import { TransformInterceptor } from 'src/common/response-transform.interceptor';
 import { ClientId } from 'src/decorators/client-id.decorator';
 import { RequiredValidationPipe } from 'src/common/required-validation.pipe';
+import { GetProductsDto } from './dto/get-products.dto';
 
 @UseInterceptors(TransformInterceptor)
 @Controller('product')
@@ -28,8 +28,16 @@ export class ProductController {
 
   constructor(private productService: ProductService) {}
   @Get('/all')
-  getProducts(@Query(ValidationPipe) getProductsDto: GetProductsDto) {
-    return this.productService.getProducts(getProductsDto);
+  getProducts(
+    @ClientId() clientId: string,
+    @Query(ValidationPipe) getProductsDto: GetProductsDto,
+  ) {
+    return this.productService.getProducts(clientId, getProductsDto);
+  }
+
+  @Get('/categories')
+  getCategories(@ClientId() clientId: string): Promise<string[]> {
+    return this.productService.getCategories(clientId);
   }
 
   @Post('/available')
