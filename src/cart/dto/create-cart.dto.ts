@@ -5,4 +5,5 @@ export class CreateCartDto {
   productId: string;
   clientId: string;
   variableId: string;
+  requiresShipping: boolean;
 }

@@ -13,6 +13,8 @@ const options: Partial<QueryOptions> = {
   useFindAndModify: false,
 };
 const TWO_DAYS = 172800000;
+const SHIPPING_PRICE = 33;
+const PACKAGING_PRICE = 5;
 @Injectable()
 export class CartService {
   readonly cookieName = 'bc_cartId';
@@ -22,7 +24,26 @@ export class CartService {
     private productService: ProductService,
   ) {}
 
-  private productToCartLineItem(product: Product): LineItem {
+  getPackagingPrice(lineItems: LineItem[], price: number) {
+    let total = 0;
+    lineItems.forEach((v) => {
+      total += v.quantity * price;
+    });
+    return total;
+  }
+
+  getTotalPrice(
+    totalPrice: number,
+    requiresShipping: boolean,
+    packagingPrice: number,
+  ): number {
+    return (
+      (requiresShipping ? totalPrice + SHIPPING_PRICE : totalPrice) +
+      packagingPrice
+    );
+  }
+
+  productToCartLineItem(product: Product): LineItem {
     return {
       id: product.id,
       variantId: product['_id'],
@@ -36,7 +57,7 @@ export class CartService {
         id: product['_id'],
         sku: product.id,
         name: product.name,
-        requiresShipping: false,
+        requiresShipping: null,
         price: product.price,
         listPrice: product.price,
         image: {
@@ -60,13 +81,34 @@ export class CartService {
       'id',
     );
     const lineItem = this.productToCartLineItem(product);
+    let packagingPrice = this.getPackagingPrice([lineItem], PACKAGING_PRICE);
     const totalPrice = lineItem.variant.price;
     if (cartId) {
       const cart = await this.cartModel.findById(cartId);
       if (!cart) {
-        return this.createCartItem(lineItem);
+        return this.createCartItem(
+          lineItem,
+          createCartDto.requiresShipping,
+          packagingPrice,
+        );
       }
+      packagingPrice = this.getPackagingPrice(
+        [...cart.lineItems, lineItem],
+        PACKAGING_PRICE,
+      );
       const item = cart.lineItems.find((v) => v.id === createCartDto.productId);
+      const commonFieldsToIncrement = {
+        lineItemsSubtotalPrice: totalPrice,
+        subtotalPrice: totalPrice,
+        totalPrice: this.getTotalPrice(
+          totalPrice,
+          createCartDto.requiresShipping,
+          packagingPrice,
+        ),
+      };
+      const commonFieldsToSet = {
+        requiresShipping: createCartDto.requiresShipping,
+      };
       if (!item) {
         return this.cartModel
           .findOneAndUpdate(
@@ -74,11 +116,8 @@ export class CartService {
               _id: cartId,
             },
             {
-              $inc: {
-                lineItemsSubtotalPrice: totalPrice,
-                subtotalPrice: totalPrice,
-                totalPrice: totalPrice,
-              },
+              $set: commonFieldsToSet,
+              $inc: commonFieldsToIncrement,
               $push: {
                 lineItems: lineItem,
               },
@@ -94,10 +133,9 @@ export class CartService {
               'lineItems.id': createCartDto.productId,
             },
             {
+              $set: commonFieldsToSet,
               $inc: {
-                lineItemsSubtotalPrice: totalPrice,
-                subtotalPrice: totalPrice,
-                totalPrice: totalPrice,
+                ...commonFieldsToIncrement,
                 'lineItems.$.quantity': 1,
               },
             },
@@ -106,11 +144,19 @@ export class CartService {
           .exec();
       }
     } else {
-      return this.createCartItem(lineItem);
+      return this.createCartItem(
+        lineItem,
+        createCartDto.requiresShipping,
+        packagingPrice,
+      );
     }
   }
 
-  async createCartItem(lineItem: LineItem): Promise<CartDocument> {
+  async createCartItem(
+    lineItem: LineItem,
+    requiresShipping: boolean,
+    packagingPrice: number,
+  ): Promise<CartDocument> {
     const totalPrice = lineItem.variant.price;
     const cartItem = new this.cartModel({
       lineItems: [lineItem],
@@ -118,9 +164,14 @@ export class CartService {
       currency: {
         code: 'UAH',
       },
+      requiresShipping,
       lineItemsSubtotalPrice: totalPrice,
       subtotalPrice: totalPrice,
-      totalPrice: totalPrice,
+      totalPrice: this.getTotalPrice(
+        totalPrice,
+        requiresShipping,
+        packagingPrice,
+      ),
     });
     await cartItem.save();
     return cartItem;
@@ -140,8 +191,9 @@ export class CartService {
     const cart = await this.cartModel.findById(cartId);
     const quantity = cart.lineItems.find((v) => v.id === updateCartDto.itemId)
       ?.quantity;
-
+    let delta = false;
     if (quantity > updateCartDto.item.quantity) {
+      delta = true;
       totalPrice = -totalPrice;
     }
 
@@ -153,12 +205,15 @@ export class CartService {
         },
         {
           $set: {
+            requiresShipping: updateCartDto.requiresShipping,
             'lineItems.$.quantity': updateCartDto.item.quantity,
           },
           $inc: {
             lineItemsSubtotalPrice: totalPrice,
             subtotalPrice: totalPrice,
-            totalPrice: totalPrice,
+            totalPrice: delta
+              ? totalPrice - PACKAGING_PRICE
+              : totalPrice + PACKAGING_PRICE,
           },
         },
         options,
@@ -181,6 +236,11 @@ export class CartService {
     const price =
       productToDelete?.variant.price * productToDelete.quantity || 0;
     // eof
+    const total = this.getTotalPrice(
+      price,
+      false,
+      this.getPackagingPrice([productToDelete], PACKAGING_PRICE),
+    );
     const cart = await this.cartModel
       .findOneAndUpdate(
         { _id: cartId },
@@ -188,7 +248,7 @@ export class CartService {
           $inc: {
             lineItemsSubtotalPrice: -price,
             subtotalPrice: -price,
-            totalPrice: -price,
+            totalPrice: -total,
           },
           $pull: {
             lineItems: {
