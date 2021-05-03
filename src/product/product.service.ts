@@ -25,33 +25,33 @@ export class ProductService {
     clientId: string,
     getProductsDto?: GetProductsDto,
   ): Promise<Product[]> {
-    delete getProductsDto.clientId;
-    this.logger.warn(JSON.stringify(getProductsDto));
-    if (Object.keys(getProductsDto).length) {
-      const filter = {};
-      const sort = {};
-      if (getProductsDto.search) {
-        filter['products.name'] = new RegExp(getProductsDto.search);
-      }
-      if (getProductsDto.category) {
-        filter['products.category'] = getProductsDto.category;
-      }
-      if (getProductsDto.sortByPrice) {
-        sort['products.price'] = getProductsDto.sortByPrice ? 1 : 0;
-      }
+    // delete getProductsDto.clientId;
+    // this.logger.warn(JSON.stringify(getProductsDto));
+    // if (Object.keys(getProductsDto).length) {
+    //   const filter = {};
+    //   const sort = {};
+    //   if (getProductsDto.search) {
+    //     filter['products.name'] = new RegExp(getProductsDto.search);
+    //   }
+    //   if (getProductsDto.category) {
+    //     filter['products.category'] = getProductsDto.category;
+    //   }
+    //   if (getProductsDto.sortByPrice) {
+    //     sort['products.price'] = getProductsDto.sortByPrice ? 1 : 0;
+    //   }
 
-      const { products } = await this.clientModel
-        .findOne({
-          _id: clientId,
-          ...filter,
-        })
-        .sort(sort)
-        .exec();
-      return products;
-    } else {
-      const { products } = await this.clientModel.findById(clientId).exec();
-      return products;
-    }
+    //   const { products } = await this.clientModel
+    //     .findOne({
+    //       _id: clientId,
+    //       ...filter,
+    //     })
+    //     .sort(sort)
+    //     .exec();
+    //   return products;
+    // } else {
+    const { products } = await this.clientModel.findById(clientId).exec();
+    return products;
+    //}
   }
 
   async getCategories(clientId: string) {
