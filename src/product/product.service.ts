@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, QueryOptions } from 'mongoose';
 import { Client, ClientDocument } from 'src/schemas/client.schema';
@@ -15,15 +15,54 @@ const options: Partial<QueryOptions> = {
 };
 @Injectable()
 export class ProductService {
+  private readonly logger = new Logger(ProductService.name);
+
   constructor(
     @InjectModel(Client.name) private clientModel: Model<ClientDocument>,
   ) {}
 
-  async getProducts(getProductsDto: GetProductsDto): Promise<Product[]> {
-    const { products } = await this.clientModel
-      .findById(getProductsDto.clientId)
-      .exec();
+  async getProducts(
+    clientId: string,
+    getProductsDto?: GetProductsDto,
+  ): Promise<Product[]> {
+    // delete getProductsDto.clientId;
+    // this.logger.warn(JSON.stringify(getProductsDto));
+    // if (Object.keys(getProductsDto).length) {
+    //   const filter = {};
+    //   const sort = {};
+    //   if (getProductsDto.search) {
+    //     filter['products.name'] = new RegExp(getProductsDto.search);
+    //   }
+    //   if (getProductsDto.category) {
+    //     filter['products.category'] = getProductsDto.category;
+    //   }
+    //   if (getProductsDto.sortByPrice) {
+    //     sort['products.price'] = getProductsDto.sortByPrice ? 1 : 0;
+    //   }
+
+    //   const { products } = await this.clientModel
+    //     .findOne({
+    //       _id: clientId,
+    //       ...filter,
+    //     })
+    //     .sort(sort)
+    //     .exec();
+    //   return products;
+    // } else {
+    const { products } = await this.clientModel.findById(clientId).exec();
     return products;
+    //}
+  }
+
+  async getCategories(clientId: string) {
+    const products = await this.getProducts(clientId);
+    return products.reduce((prev, product) => {
+      if (prev.length && prev[prev.length].category !== product.category) {
+        return [...prev, product.category];
+      } else {
+        return prev;
+      }
+    }, []);
   }
 
   async getProduct(
@@ -31,7 +70,7 @@ export class ProductService {
     clientId: string,
     param = 'id',
   ): Promise<Product> {
-    const products = await this.getProducts({ clientId });
+    const products = await this.getProducts(clientId);
     return products.find((v) => v[param] === value);
   }
 

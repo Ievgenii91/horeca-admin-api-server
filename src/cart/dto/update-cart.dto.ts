@@ -6,4 +6,5 @@ type Item = {
 export class UpdateCartDto {
   itemId: string;
   item: Item;
+  requiresShipping: boolean;
 }

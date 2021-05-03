@@ -1,7 +1,7 @@
 {
-  "name": "nestbn",
-  "version": "0.1.1",
-  "description": "BN api service",
+  "name": "horeca-api-server",
+  "version": "0.1.2",
+  "description": "horeca api service",
   "author": "Ievgenii Butyrin",
   "private": true,
   "license": "MIT",
@@ -83,6 +83,9 @@
       "ts"
     ],
     "rootDir": "src",
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/$1"
+    },
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
