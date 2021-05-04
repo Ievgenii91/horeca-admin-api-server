@@ -20,6 +20,7 @@ import { TransformInterceptor } from 'src/common/response-transform.interceptor'
 import { ClientId } from 'src/decorators/client-id.decorator';
 import { RequiredValidationPipe } from 'src/common/required-validation.pipe';
 import { GetProductsDto } from './dto/get-products.dto';
+import { Product } from 'src/schemas/product.schema';
 
 @UseInterceptors(TransformInterceptor)
 @Controller('product')
@@ -28,11 +29,23 @@ export class ProductController {
 
   constructor(private productService: ProductService) {}
   @Get('/all')
-  getProducts(
+  getProducts(@ClientId() clientId: string) {
+    return this.productService.getProducts(clientId);
+  }
+
+  @Get('/search')
+  async searchProducts(
     @ClientId() clientId: string,
     @Query(ValidationPipe) getProductsDto: GetProductsDto,
-  ) {
-    return this.productService.getProducts(clientId, getProductsDto);
+  ): Promise<{ products: Product[]; found: boolean }> {
+    const products = await this.productService.searchProducts(
+      clientId,
+      getProductsDto,
+    );
+    return {
+      products,
+      found: !!products.length,
+    };
   }
 
   @Get('/categories')

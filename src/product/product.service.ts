@@ -21,37 +21,43 @@ export class ProductService {
     @InjectModel(Client.name) private clientModel: Model<ClientDocument>,
   ) {}
 
-  async getProducts(
-    clientId: string,
-    getProductsDto?: GetProductsDto,
-  ): Promise<Product[]> {
-    // delete getProductsDto.clientId;
-    // this.logger.warn(JSON.stringify(getProductsDto));
-    // if (Object.keys(getProductsDto).length) {
-    //   const filter = {};
-    //   const sort = {};
-    //   if (getProductsDto.search) {
-    //     filter['products.name'] = new RegExp(getProductsDto.search);
-    //   }
-    //   if (getProductsDto.category) {
-    //     filter['products.category'] = getProductsDto.category;
-    //   }
-    //   if (getProductsDto.sortByPrice) {
-    //     sort['products.price'] = getProductsDto.sortByPrice ? 1 : 0;
-    //   }
+  textSearch(v: Product, getProductsDto?: GetProductsDto) {
+    const values = [v.name, v.description, v.fancyName, v.category];
+    for (let i = 0; i < values.length; i++) {
+      if (
+        values[i]?.toLowerCase().includes(getProductsDto.search.toLowerCase())
+      ) {
+        return v;
+      }
+    }
+  }
 
-    //   const { products } = await this.clientModel
-    //     .findOne({
-    //       _id: clientId,
-    //       ...filter,
-    //     })
-    //     .sort(sort)
-    //     .exec();
-    //   return products;
-    // } else {
+  async searchProducts(clientId: string, getProductsDto?: GetProductsDto) {
+    // TODO: sort in DB
+    const { products } = await this.clientModel.findById(clientId);
+
+    return products
+      .filter((v) => {
+        if (getProductsDto.search) {
+          return this.textSearch(v, getProductsDto);
+        }
+        if (getProductsDto.category) {
+          return v.category.includes(getProductsDto.category);
+        }
+        return v;
+      })
+      .sort((a, b) => {
+        if (getProductsDto.sortByPrice === 'asc') {
+          return a.price > b.price ? 1 : -1;
+        } else {
+          return a.price > b.price ? -1 : 1;
+        }
+      });
+  }
+
+  async getProducts(clientId: string): Promise<Product[]> {
     const { products } = await this.clientModel.findById(clientId).exec();
     return products;
-    //}
   }
 
   async getCategories(clientId: string) {
