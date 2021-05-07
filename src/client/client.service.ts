@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model, UpdateWriteOpResult } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
 import { Client, ClientDocument } from 'src/schemas/client.schema';
 import { Product } from 'src/schemas/product.schema';
 import { CreateClientDto } from './dto/create-client.dto';
@@ -50,9 +50,9 @@ export class ClientService implements OnModuleInit {
     return newClient.save();
   }
 
-  async incrementOrdersCount(_id: string): Promise<UpdateWriteOpResult> {
+  async incrementOrdersCount(_id: string): Promise<ClientDocument> {
     return this.clientModel
-      .updateOne({ _id }, { $inc: { ordersCount: 1 } })
+      .findByIdAndUpdate(_id, { $inc: { ordersCount: 1 } })
       .exec();
   }
 

@@ -1,4 +1,11 @@
-import { IsEmail, IsNotEmpty, IsPhoneNumber } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsPhoneNumber,
+  IsDateString,
+  IsNumber,
+  IsOptional,
+  IsEmail,
+} from 'class-validator';
 import { Product } from 'src/schemas/product.schema';
 
 export enum RequestInitiator {
@@ -8,15 +15,18 @@ export enum RequestInitiator {
 
 export class CreateOrderDto {
   @IsNotEmpty()
+  @IsOptional()
   clientId: string;
-
-  @IsEmail()
-  owner: string;
 
   @IsNotEmpty()
   initiator: RequestInitiator;
 
+  @IsOptional()
+  @IsEmail()
+  owner: string;
+
   @IsPhoneNumber('UA')
+  @IsOptional()
   phone: string;
 
   @IsNotEmpty()
@@ -25,7 +35,21 @@ export class CreateOrderDto {
   @IsNotEmpty()
   products: Partial<Product>[];
 
+  @IsDateString()
+  date: string;
+
   room: string | number;
 
   userId: string | number;
+
+  @IsOptional()
+  address: string;
+
+  @IsNumber()
+  @IsOptional()
+  deliverPrice: number;
+
+  @IsNumber()
+  @IsOptional()
+  packagingPrice: number;
 }
