@@ -38,7 +38,7 @@ export class UserService {
     ctx.session.user = updatedUser;
   }
 
-  async addOrUpdateUser({ phone, name }) {
+  async addOrUpdateUser({ phone, name }): Promise<UserDocument> {
     // this context is loosing after babel compile, strange bug,
     let updatedUser = null;
     const user = await this.userModel.findOne({ phone });
@@ -46,17 +46,24 @@ export class UserService {
       // update
       updatedUser = new User({
         ...user,
-        appJoins: user.appJoins,
-        // cachedOrder: user.cachedOrder,
+        appJoins: user.appJoins + 1,
       });
-      updatedUser.join();
-      await this.userModel
-        .findOneAndUpdate({ phone }, { $set: updatedUser })
+      // updatedUser.join();
+      return this.userModel
+        .findOneAndUpdate(
+          { phone },
+          { $set: updatedUser },
+          {
+            new: true,
+            useFindAndModify: false,
+          },
+        )
         .exec();
     } else {
       // add
-      updatedUser = new User({ phone, firstName: name });
-      await this.userModel.create(updatedUser);
+      const user = new this.userModel(new User({ phone, firstName: name }));
+      user.save();
+      return user;
     }
   }
 

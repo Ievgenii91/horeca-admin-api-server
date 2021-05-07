@@ -88,9 +88,9 @@ export class OrderService {
         ...createOrder,
       });
       await order.save();
-      await this.userService.addOrUpdateUser(createOrder);
+      const user = await this.userService.addOrUpdateUser(createOrder);
       await this.userModel
-        .updateOne({ id: createOrder.userId }, { $push: { orders: id } })
+        .findByIdAndUpdate(user._id, { $push: { orders: id } })
         .exec();
 
       await this.clientService.incrementOrdersCount(createOrder.clientId);
