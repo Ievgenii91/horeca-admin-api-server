@@ -67,12 +67,13 @@ export class OrderService {
     let order = null;
     // TODO: refactor, move users to separate service
     if (createOrder.initiator === RequestInitiator.Bot) {
-      order = await this.orderModel.create({
+      order = new this.orderModel({
         id,
         black: true,
         status: 'new',
         ...createOrder,
       });
+      await order.save();
 
       await this.userModel
         .updateOne({ id: createOrder.userId }, { $push: { orders: id } })
@@ -80,12 +81,13 @@ export class OrderService {
 
       await this.clientService.incrementOrdersCount(createOrder.clientId);
     } else if (createOrder.initiator === RequestInitiator.Site) {
-      await this.orderModel.create({
+      order = new this.orderModel({
         id,
         black: true,
         status: 'new',
         ...createOrder,
       });
+      await order.save();
       await this.userService.addOrUpdateUser(createOrder);
       await this.userModel
         .updateOne({ id: createOrder.userId }, { $push: { orders: id } })

@@ -28,4 +28,10 @@ export class CreateOrderDto {
   room: string | number;
 
   userId: string | number;
+
+  address: string;
+
+  deliverPrice: number;
+
+  packagingPrice: number;
 }
