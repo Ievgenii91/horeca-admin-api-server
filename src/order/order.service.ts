@@ -6,7 +6,7 @@ import { ClientService } from 'src/client/client.service';
 import { EventsGateway } from 'src/events/events.gateway';
 import { Order, OrderDocument } from 'src/schemas/order.schema';
 import { UserService } from './../user/user.service';
-import { CreateOrderDto } from './dto/create-order.dto';
+import { CreateOrderDto, RequestInitiator } from './dto/create-order.dto';
 import { GetOrdersDto } from './dto/get-orders.dto';
 @Injectable()
 export class OrderService implements OnModuleInit {
@@ -90,6 +90,10 @@ export class OrderService implements OnModuleInit {
     await this.userService.addOrUpdateUser({
       orderId: order.id,
       ...createOrder,
+      userId:
+        createOrder.initiator === RequestInitiator.Site
+          ? createOrder.phone
+          : createOrder.userId,
     });
     await this.clientService.incrementOrdersCount(createOrder.clientId);
 

@@ -36,6 +36,15 @@ export class Order {
   @Prop()
   userId: string;
 
+  @Prop()
+  address: string;
+
+  @Prop()
+  deliverPrice: number;
+
+  @Prop()
+  packagingPrice: number;
+
   hasBonus() {
     return this.products.filter((v) => v.bonus).length > 0;
   }
