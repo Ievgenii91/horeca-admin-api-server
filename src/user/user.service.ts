@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
 import { User, UserDocument } from 'src/schemas/user.schema';
 import { Order } from 'src/schemas/order.schema';
 import { BotContext } from 'src/telebot/basic/common/bot.context';
@@ -38,33 +38,32 @@ export class UserService {
     ctx.session.user = updatedUser;
   }
 
-  async addOrUpdateUser({ phone, name }): Promise<UserDocument> {
-    // this context is loosing after babel compile, strange bug,
-    let updatedUser = null;
-    const user = await this.userModel.findOne({ phone });
-    if (user) {
-      // update
-      updatedUser = new User({
-        ...user,
-        appJoins: user.appJoins + 1,
-      });
-      // updatedUser.join();
-      return this.userModel
-        .findOneAndUpdate(
-          { phone },
-          { $set: updatedUser },
-          {
-            new: true,
-            useFindAndModify: false,
-          },
-        )
-        .exec();
-    } else {
-      // add
-      const user = new this.userModel(new User({ phone, firstName: name }));
-      user.save();
-      return user;
+  async addOrUpdateUser({
+    orderId,
+    phone,
+    userId,
+    name,
+    address,
+  }): Promise<UserDocument> {
+    let query: FilterQuery<{ phone: string; id: number }> = { phone };
+    if (userId && !phone) {
+      query = { id: userId };
     }
+    return this.userModel
+      .findOneAndUpdate(
+        query,
+        {
+          $set: { firstName: name, address },
+          $inc: { appJoins: 1 },
+          $push: { orders: orderId },
+        },
+        {
+          new: true,
+          useFindAndModify: false,
+          upsert: true,
+        },
+      )
+      .exec();
   }
 
   async getUsers() {

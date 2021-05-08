@@ -29,6 +29,9 @@ export class Client {
 
   @Prop()
   oncomingChatId: string;
+
+  @Prop()
+  contactPhones: string[];
 }
 
 export const ClientSchema = SchemaFactory.createForClass(Client);

@@ -1,22 +1,23 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ClientService } from 'src/client/client.service';
+import { EventsGateway } from 'src/events/events.gateway';
 import { Order, OrderDocument } from 'src/schemas/order.schema';
-import { User, UserDocument } from 'src/schemas/user.schema';
-import { CreateOrderDto, RequestInitiator } from './dto/create-order.dto';
-import { GetOrdersDto } from './dto/get-orders.dto';
 import { UserService } from './../user/user.service';
-
+import { CreateOrderDto } from './dto/create-order.dto';
+import { GetOrdersDto } from './dto/get-orders.dto';
 @Injectable()
-export class OrderService {
+export class OrderService implements OnModuleInit {
   private names: Array<string>;
+  private socketService: EventsGateway;
 
   constructor(
     @InjectModel(Order.name) private orderModel: Model<OrderDocument>,
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
     private clientService: ClientService,
     private userService: UserService,
+    private moduleRef: ModuleRef,
   ) {
     this.names = [
       'грішник',
@@ -28,6 +29,10 @@ export class OrderService {
       'наливкович',
       'сидр_сам_себе_не_вип`є',
     ];
+  }
+
+  onModuleInit() {
+    this.socketService = this.moduleRef.get(EventsGateway, { strict: false });
   }
 
   getRandomName() {
@@ -62,42 +67,38 @@ export class OrderService {
     return this.orderModel.find(getOrdersDto).exec();
   }
 
+  async finishOrder(id: string): Promise<OrderDocument> {
+    return this.orderModel.findOneAndUpdate(
+      { id },
+      { $set: { status: 'done' } },
+      {
+        new: true,
+        useFindAndModify: false,
+      },
+    );
+  }
+
   async createOrder(createOrder: CreateOrderDto): Promise<Order> {
     const id = await this.generateOrderId();
-    let order = null;
-    // TODO: refactor, move users to separate service
-    if (createOrder.initiator === RequestInitiator.Bot) {
-      order = new this.orderModel({
-        id,
-        black: true,
-        status: 'new',
-        ...createOrder,
-      });
-      await order.save();
+    const order = new this.orderModel({
+      id,
+      black: true,
+      status: 'new',
+      ...createOrder,
+    });
+    await order.save();
+    await this.userService.addOrUpdateUser({
+      orderId: order.id,
+      ...createOrder,
+    });
+    await this.clientService.incrementOrdersCount(createOrder.clientId);
 
-      await this.userModel
-        .updateOne({ id: createOrder.userId }, { $push: { orders: id } })
-        .exec();
+    //TODO: if autocall enabled -> call
 
-      await this.clientService.incrementOrdersCount(createOrder.clientId);
-    } else if (createOrder.initiator === RequestInitiator.Site) {
-      order = new this.orderModel({
-        id,
-        black: true,
-        status: 'new',
-        ...createOrder,
-      });
-      await order.save();
-      const user = await this.userService.addOrUpdateUser(createOrder);
-      await this.userModel
-        .findByIdAndUpdate(user._id, { $push: { orders: id } })
-        .exec();
-
-      await this.clientService.incrementOrdersCount(createOrder.clientId);
-    } else {
-      throw new NotFoundException('please provide correct initiator');
-    }
-
+    // inject sockets ->
+    // send on oncoming site
+    this.socketService.addOrder(order);
+    // send on oncoming in telegram
     return order;
   }
 }
