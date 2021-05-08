@@ -5,7 +5,13 @@ import { join } from 'path';
 import * as helmet from 'helmet';
 import * as cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
-import { IoAdapter } from '@nestjs/platform-socket.io';
+import { SocketIoAdapter } from './events/socket-io.adapter';
+
+const corsOrigins = [
+  'http://localhost:3000',
+  'https://horeca-admin.herokuapp.com',
+  /vercel.app/,
+];
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -18,18 +24,14 @@ async function bootstrap() {
     }),
   );
 
-  app.useWebSocketAdapter(new IoAdapter(app));
+  app.useWebSocketAdapter(new SocketIoAdapter(app, corsOrigins));
 
   app.setGlobalPrefix('api');
 
   app.useStaticAssets(join(__dirname, '..', 'dist'));
 
   app.enableCors({
-    origin: [
-      'http://localhost:3000',
-      'https://horeca-admin.herokuapp.com',
-      /vercel.app/,
-    ],
+    origin: corsOrigins,
     credentials: true,
   });
 

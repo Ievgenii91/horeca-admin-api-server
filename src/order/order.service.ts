@@ -60,6 +60,17 @@ export class OrderService {
     return this.orderModel.find(getOrdersDto).exec();
   }
 
+  async finishOrder(id: string): Promise<OrderDocument> {
+    return this.orderModel.findOneAndUpdate(
+      { id },
+      { $set: { status: 'done' } },
+      {
+        new: true,
+        useFindAndModify: false,
+      },
+    );
+  }
+
   async createOrder(createOrder: CreateOrderDto): Promise<Order> {
     const id = await this.generateOrderId();
     const order = new this.orderModel({
