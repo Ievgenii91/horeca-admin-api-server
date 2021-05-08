@@ -1,4 +1,5 @@
-import { BadGatewayException, Logger } from '@nestjs/common';
+import { BadGatewayException, Logger, OnModuleInit } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 import {
   MessageBody,
   OnGatewayInit,
@@ -13,30 +14,35 @@ import { OrderService } from '../order/order.service';
 @WebSocketGateway({
   transports: ['websocket'],
 })
-export class EventsGateway implements OnGatewayInit, OnGatewayConnection {
+export class EventsGateway
+  implements OnGatewayInit, OnGatewayConnection, OnModuleInit {
   @WebSocketServer()
   server: Server;
-  private readonly logger = new Logger(EventsGateway.name);
 
-  constructor(private orderService: OrderService) {}
+  private readonly logger = new Logger(EventsGateway.name);
+  private orderService: OrderService;
+
+  static initializationCounts = 0;
+
+  constructor(private moduleRef: ModuleRef) {
+    this.logger.warn(
+      `${EventsGateway.initializationCounts++} times EVENTS gateway inited`,
+      EventsGateway.name,
+    );
+  }
+
+  onModuleInit() {
+    this.orderService = this.moduleRef.get(OrderService, { strict: false });
+  }
 
   @SubscribeMessage('finish_order')
   async handleMessage(
     @ConnectedSocket() client: Socket,
     @MessageBody() { id }: { id: string },
-  ): Promise<string> {
+  ): Promise<boolean> {
     await this.orderService.finishOrder(id);
-    return 'Hello world!';
-  }
-
-  @SubscribeMessage('add_order')
-  handleAddOrderMessage() {
-    return 'test add order';
-  }
-
-  @SubscribeMessage('test')
-  async test(@MessageBody() data: number): Promise<number> {
-    return data;
+    client.emit('finish_order', id);
+    return true;
   }
 
   afterInit(): void {
@@ -51,5 +57,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection {
     }
     socket.join(clientId);
     this.logger.log(`${clientId} room joined`);
+  }
+
+  addOrder(order: unknown) {
+    this.server.emit('add_order', order);
   }
 }
