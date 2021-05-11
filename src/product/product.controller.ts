@@ -21,19 +21,19 @@ import { ClientId } from 'src/decorators/client-id.decorator';
 import { RequiredValidationPipe } from 'src/common/required-validation.pipe';
 import { GetProductsDto } from './dto/get-products.dto';
 import { Product } from 'src/schemas/product.schema';
-
 @UseInterceptors(TransformInterceptor)
-@Controller('product')
+@Controller()
 export class ProductController {
   private readonly logger = new Logger(ProductController.name);
 
   constructor(private productService: ProductService) {}
-  @Get('/all')
+
+  @Get('product/all')
   getProducts(@ClientId() clientId: string) {
     return this.productService.getProducts(clientId);
   }
 
-  @Get('/search')
+  @Get('product/search')
   async searchProducts(
     @ClientId() clientId: string,
     @Query(ValidationPipe) getProductsDto: GetProductsDto,
@@ -48,12 +48,12 @@ export class ProductController {
     };
   }
 
-  @Get('/categories')
+  @Get('product/categories')
   getCategories(@ClientId() clientId: string): Promise<string[]> {
     return this.productService.getCategories(clientId);
   }
 
-  @Post('/available')
+  @Post('product/available')
   updateProductAvailability(
     @Body(ValidationPipe) body: UpdateProductAvailabilityDto,
   ) {
@@ -65,7 +65,7 @@ export class ProductController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Post()
+  @Post('product')
   create(
     @Body(ValidationPipe)
     createOrUpdateProductDto: CreateProductDto | UpdateProductDto,
@@ -75,7 +75,7 @@ export class ProductController {
   }
 
   //TODO: review get product to add filter product dto
-  @Get('/:slug')
+  @Get('product/:slug')
   getProduct(
     @Param('slug', RequiredValidationPipe) slug: string,
     @ClientId() clientId: string,
@@ -87,7 +87,7 @@ export class ProductController {
     return this.productService.getProduct(slug, clientId, 'slug');
   }
 
-  @Get()
+  @Get('product')
   getProductById(
     @Query('id', RequiredValidationPipe) id: string,
     @ClientId() clientId: string,
@@ -100,7 +100,7 @@ export class ProductController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Post('/delete')
+  @Post('product/delete')
   deleteProduct(@Body(ValidationPipe) deleteProductDto: DeleteProductDto) {
     this.logger.log(
       `delete product ${deleteProductDto.id}`,
@@ -110,7 +110,7 @@ export class ProductController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Post('/:id')
+  @Post('product/:id')
   update(
     @Param('id') id: string,
     @Body(ValidationPipe)

@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 import { Client, ClientDocument } from 'src/schemas/client.schema';
@@ -8,6 +8,7 @@ import { CreateClientDto } from './dto/create-client.dto';
 @Injectable()
 export class ClientService implements OnModuleInit {
   private clients: Client[];
+  private readonly logger = new Logger(ClientService.name);
 
   constructor(
     @InjectModel(Client.name) private clientModel: Model<ClientDocument>,
@@ -54,6 +55,32 @@ export class ClientService implements OnModuleInit {
     return this.clientModel
       .findByIdAndUpdate(_id, { $inc: { ordersCount: 1 } })
       .exec();
+  }
+
+  // TODO: deprecated
+  async migrateFromClientToCollection(): Promise<void> {
+    const clients = await this.clientModel.find({}).exec();
+    let products = [];
+    clients.forEach((client) => {
+      products = [
+        ...products,
+        ...client.products.map((doc) => {
+          const v = doc['_doc'];
+          delete v['_id'];
+          if (!v.name) {
+            v.name = 'ups';
+          }
+          return {
+            ...v,
+            clientId: client.id,
+          };
+        }),
+      ];
+    });
+    // await this.productModel.insertMany(products);
+    this.logger.log(`\n\n------------\n\n
+    ${products.length} products were migrated successfully
+    `);
   }
 
   async onModuleInit() {
