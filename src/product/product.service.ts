@@ -1,8 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, QueryOptions } from 'mongoose';
-import { Client, ClientDocument } from 'src/schemas/client.schema';
-import { Product } from 'src/schemas/product.schema';
+import { Product, ProductDocument } from 'src/schemas/product.schema';
 import { CreateProductDto } from './dto/create-product.dto';
 import { DeleteProductDto } from './dto/delete-product.dto';
 import { GetProductsDto } from './dto/get-products.dto';
@@ -18,7 +17,7 @@ export class ProductService {
   private readonly logger = new Logger(ProductService.name);
 
   constructor(
-    @InjectModel(Client.name) private clientModel: Model<ClientDocument>,
+    @InjectModel(Product.name) private productModel: Model<ProductDocument>,
   ) {}
 
   textSearch(v: Product, getProductsDto?: GetProductsDto) {
@@ -33,31 +32,29 @@ export class ProductService {
   }
 
   async searchProducts(clientId: string, getProductsDto?: GetProductsDto) {
-    // TODO: sort in DB
-    const { products } = await this.clientModel.findById(clientId);
-
-    return products
-      .filter((v) => {
-        if (getProductsDto.search) {
-          return this.textSearch(v, getProductsDto);
-        }
-        if (getProductsDto.category) {
-          return v.category.includes(getProductsDto.category);
-        }
-        return v;
-      })
-      .sort((a, b) => {
-        if (getProductsDto.sortByPrice === 'asc') {
-          return a.price > b.price ? 1 : -1;
-        } else {
-          return a.price > b.price ? -1 : 1;
-        }
-      });
+    this.logger.log(
+      `Products search performed ${JSON.stringify(
+        getProductsDto,
+      )} for client ${clientId}`,
+      ProductService.name,
+    );
+    const products = await this.productModel.find({ clientId }).sort({
+      price: getProductsDto.sortByPrice === 'asc' ? 1 : -1,
+    });
+    // TODO: sort search in DB
+    return products.filter((v) => {
+      if (getProductsDto.search) {
+        return this.textSearch(v, getProductsDto);
+      }
+      if (getProductsDto.category) {
+        return v.category.includes(getProductsDto.category);
+      }
+      return v;
+    });
   }
 
   async getProducts(clientId: string): Promise<Product[]> {
-    const { products } = await this.clientModel.findById(clientId).exec();
-    return products;
+    return this.productModel.find({ clientId }).exec();
   }
 
   async getCategories(clientId: string) {
@@ -81,46 +78,27 @@ export class ProductService {
   }
 
   async createProduct(createProductDto: CreateProductDto) {
-    const product = new Product(createProductDto);
-    return this.clientModel
-      .findOneAndUpdate(
-        {
-          _id: createProductDto.clientId,
-        },
-        {
-          $push: {
-            products: product,
-          },
-        },
-        options,
-      )
-      .exec();
+    const product = new this.productModel(new Product(createProductDto));
+    return product.save();
   }
 
   async updateProduct(updateProductDto: UpdateProductDto) {
-    return this.clientModel
+    this.logger.log(
+      `Product UPDATE performed ${JSON.stringify(
+        updateProductDto,
+      )} for client ${updateProductDto.clientId}`,
+      ProductService.name,
+    );
+    return this.productModel
       .findOneAndUpdate(
         {
-          _id: updateProductDto.clientId,
-          'products.id': updateProductDto.id,
+          clientId: updateProductDto.clientId,
+          id: updateProductDto.id,
         },
         {
           $set: {
-            'products.$.name': updateProductDto.name,
-            'products.$.description': updateProductDto.description,
-            'products.$.fancyName': updateProductDto.fancyName,
-            'products.$.category': updateProductDto.category,
-            'products.$.subCategory': updateProductDto.subCategory,
-            'products.$.additionalText': updateProductDto.additionalText,
-            'products.$.available': updateProductDto.available,
-            'products.$.price': updateProductDto.price,
-            'products.$.editMode': false,
-            'products.$.type': updateProductDto.type,
-            'products.$.crossSales': updateProductDto.crossSales,
-            'products.$.slug': updateProductDto.slug,
-            'products.$.path': updateProductDto.path,
-            'products.$.images': updateProductDto.images,
-            'products.$.usedForCrossSales': updateProductDto.usedForCrossSales,
+            ...updateProductDto,
+            editMode: false,
           },
         },
         options,
@@ -133,15 +111,15 @@ export class ProductService {
   ) {
     const { clientId, id, available } = updateProductAvailabilityDto;
 
-    return this.clientModel
+    return this.productModel
       .findOneAndUpdate(
         {
-          _id: clientId,
-          'products.id': id,
+          clientId,
+          id,
         },
         {
           $set: {
-            'products.$.available': available,
+            available,
           },
         },
         options,
@@ -151,20 +129,11 @@ export class ProductService {
 
   async deleteProduct(deleteProductDto: DeleteProductDto) {
     const { id, clientId } = deleteProductDto;
-    return this.clientModel
-      .findOneAndUpdate(
-        {
-          _id: clientId,
-        },
-        {
-          $pull: {
-            products: {
-              id,
-            },
-          },
-        },
-        options,
-      )
+    return this.productModel
+      .findOneAndDelete({
+        clientId,
+        id,
+      })
       .exec();
   }
 }

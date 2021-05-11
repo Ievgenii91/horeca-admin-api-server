@@ -6,6 +6,8 @@ export type ProductDocument = Product & Document;
 
 @Schema()
 export class Product {
+  @Prop({ type: String, ref: 'Client' })
+  clientId: string;
   @Prop()
   id: string;
   @Prop({ required: true })
@@ -52,8 +54,13 @@ export class Product {
   slug: string;
   @Prop()
   path: string;
+  @Prop()
+  weight: number;
+  @Prop()
+  tags: string[];
 
   constructor(data: Partial<Product> = {}) {
+    this.clientId = data.clientId;
     this.name = data.name || null;
     this.id = data.id || this.generateId();
     this.description = data.description || null;

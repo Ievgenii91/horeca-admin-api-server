@@ -38,4 +38,11 @@ export class ClientController {
   createClient(@Body(ValidationPipe) createClientDto: CreateClientDto) {
     return this.clientService.createClient(createClientDto);
   }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Permissions('data:update')
+  @Post('/products/migrate')
+  migrateProducts() {
+    return this.clientService.migrateFromClientToCollection();
+  }
 }
