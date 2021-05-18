@@ -1,6 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { InjectModel } from '@nestjs/mongoose';
+import axios from 'axios';
 import { Model } from 'mongoose';
 import { ClientService } from 'src/client/client.service';
 import { EventsGateway } from 'src/events/events.gateway';
@@ -97,9 +98,13 @@ export class OrderService implements OnModuleInit {
     });
     await this.clientService.incrementOrdersCount(createOrder.clientId);
 
-    //TODO: if autocall enabled -> call
-
-    // inject sockets ->
+    // PHONECALL_PASS
+    // ADMIN_PHONE
+    //https://smsc.ua/sys/send.php?login=crashraze&psw=18IM1buta!&phones=380630471200&mes=hello&call=1
+    const message = 'У вас новый заказ!';
+    axios.get(
+      `https://smsc.ua/sys/send.php?login=crashraze&psw=${process.env.PHONECALL_PASS}&phones=${process.env.ADMIN_PHONE}&mes=${message}&call=1`,
+    );
     // send on oncoming site
     this.socketService.addOrder(order);
     // send on oncoming in telegram
