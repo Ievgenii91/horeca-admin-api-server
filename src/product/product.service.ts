@@ -20,17 +20,6 @@ export class ProductService {
     @InjectModel(Product.name) private productModel: Model<ProductDocument>,
   ) {}
 
-  textSearch(v: Product, getProductsDto?: GetProductsDto) {
-    const values = [v.name, v.description, v.fancyName, v.category];
-    for (let i = 0; i < values.length; i++) {
-      if (
-        values[i]?.toLowerCase().includes(getProductsDto.search.toLowerCase())
-      ) {
-        return v;
-      }
-    }
-  }
-
   async searchProducts(clientId: string, getProductsDto?: GetProductsDto) {
     this.logger.log(
       `Products search performed ${JSON.stringify(
@@ -38,19 +27,31 @@ export class ProductService {
       )} for client ${clientId}`,
       ProductService.name,
     );
-    const products = await this.productModel.find({ clientId }).sort({
-      price: getProductsDto.sortByPrice === 'asc' ? 1 : -1,
-    });
-    // TODO: sort search in DB
-    return products.filter((v) => {
-      if (getProductsDto.search) {
-        return this.textSearch(v, getProductsDto);
-      }
-      if (getProductsDto.category) {
-        return v.category.includes(getProductsDto.category);
-      }
-      return v;
-    });
+    let sort = {};
+    if (getProductsDto.sort) {
+      const val = getProductsDto.sort;
+      const dir = (asc: string, desc: string): number => {
+        return (val === asc && 1) || (val === desc && -1);
+      };
+      sort = {
+        ...sort,
+        name: dir('asc', 'desc'),
+        price: dir('price-asc', 'price-desc'),
+        date: dir('latest-asc', 'latest-desc'),
+        rating: dir('trending-asc', 'trending-desc'),
+      };
+      delete getProductsDto.sort;
+    }
+    const query = { ...getProductsDto, clientId };
+    if (getProductsDto.search) {
+      // text search index is set for name and additionalText fields in doc.
+      return this.productModel
+        .find({
+          $text: { $search: getProductsDto.search },
+        })
+        .sort(sort);
+    }
+    return this.productModel.find(query).sort(sort);
   }
 
   async getProducts(clientId: string): Promise<Product[]> {

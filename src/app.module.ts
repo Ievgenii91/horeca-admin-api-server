@@ -12,6 +12,7 @@ import { ProductModule } from './product/product.module';
 import { PagesModule } from './pages/pages.module';
 import { CartModule } from './cart/cart.module';
 import { TransformInterceptor } from './common/response-transform.interceptor';
+import { CategoryModule } from './category/category.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -28,6 +29,7 @@ import { TransformInterceptor } from './common/response-transform.interceptor';
     ProductModule,
     PagesModule,
     CartModule,
+    CategoryModule,
   ],
   providers: [TransformInterceptor],
 })
