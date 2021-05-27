@@ -13,6 +13,7 @@ import { PagesModule } from './pages/pages.module';
 import { CartModule } from './cart/cart.module';
 import { TransformInterceptor } from './common/response-transform.interceptor';
 import { CategoryModule } from './category/category.module';
+import { VisitsModule } from './visits/visits.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -30,6 +31,7 @@ import { CategoryModule } from './category/category.module';
     PagesModule,
     CartModule,
     CategoryModule,
+    VisitsModule,
   ],
   providers: [TransformInterceptor],
 })

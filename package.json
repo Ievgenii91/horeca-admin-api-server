@@ -42,7 +42,7 @@
     "express-session": "^1.17.1",
     "helmet": "^4.4.1",
     "jwks-rsa": "^2.0.2",
-    "mongoose": "^5.12.3",
+    "mongoose": "^5.12.11",
     "nestjs-telegraf": "^2.2.2",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
