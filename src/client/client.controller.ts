@@ -16,6 +16,7 @@ import { Permissions } from 'src/authz/permissions.decorator';
 import { User } from 'src/decorators/user.decorator';
 import { JwtPayload } from 'src/authz/interfaces/jwt-payload.interface';
 import { TransformInterceptor } from 'src/common/response-transform.interceptor';
+import { ApiBody } from '@nestjs/swagger';
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 @UseInterceptors(TransformInterceptor)
 @Controller('client')
@@ -34,6 +35,9 @@ export class ClientController {
     return this.clientService.getClients();
   }
 
+  @ApiBody({
+    type: CreateClientDto,
+  })
   @Post()
   createClient(@Body(ValidationPipe) createClientDto: CreateClientDto) {
     return this.clientService.createClient(createClientDto);
