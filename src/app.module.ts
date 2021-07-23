@@ -12,7 +12,7 @@ import { ProductsModule } from './products/products.module';
 import { PagesModule } from './pages/pages.module';
 import { CartModule } from './cart/cart.module';
 import { TransformInterceptor } from './common/response-transform.interceptor';
-import { CategoryModule } from './category/category.module';
+import { CategoryModule } from './categories/categories.module';
 import { VisitsModule } from './visits/visits.module';
 @Module({
   imports: [

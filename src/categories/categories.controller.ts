@@ -11,15 +11,15 @@ import {
 } from '@nestjs/common';
 import { TransformInterceptor } from 'src/common/response-transform.interceptor';
 import { ClientId } from 'src/decorators/client-id.decorator';
-import { CategoryService } from './category.service';
+import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Types } from 'mongoose';
 
 @UseInterceptors(TransformInterceptor)
-@Controller('category')
-export class CategoryController {
-  constructor(private readonly categoryService: CategoryService) {}
+@Controller('v1/categories')
+export class CategoriesController {
+  constructor(private readonly categoryService: CategoriesService) {}
 
   @Post()
   create(@Body(ValidationPipe) createCategoryDto: CreateCategoryDto) {

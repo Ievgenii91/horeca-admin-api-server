@@ -6,7 +6,7 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category, CategoryDocument } from './entities/category.schema';
 
 @Injectable()
-export class CategoryService {
+export class CategoriesService {
   constructor(
     @InjectModel(Category.name) private categoryModel: Model<CategoryDocument>,
   ) {}
