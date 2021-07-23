@@ -6,7 +6,7 @@ import { Order } from 'src/schemas/order.schema';
 import { BotContext } from 'src/telebot/basic/common/bot.context';
 
 @Injectable()
-export class UserService {
+export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
   async addOrUpdateUserMiddleware(ctx: BotContext) {

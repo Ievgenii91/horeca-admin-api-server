@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { TextDocument, Text } from 'src/schemas/text.schema';
 
 @Injectable()
-export class TextService {
+export class TextsService {
   constructor(@InjectModel(Text.name) private textModel: Model<TextDocument>) {}
 
   getTexts(clientId: string) {

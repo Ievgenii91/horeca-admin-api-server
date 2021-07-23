@@ -6,18 +6,19 @@ import { Model } from 'mongoose';
 import { ClientsService } from 'src/clients/clients.service';
 import { EventsGateway } from 'src/events/events.gateway';
 import { Order, OrderDocument } from 'src/schemas/order.schema';
-import { UserService } from './../user/user.service';
+import { UsersService } from '../users/users.service';
 import { CreateOrderDto, RequestInitiator } from './dto/create-order.dto';
 import { GetOrdersDto } from './dto/get-orders.dto';
+
 @Injectable()
-export class OrderService implements OnModuleInit {
+export class OrdersService implements OnModuleInit {
   private names: Array<string>;
   private socketService: EventsGateway;
 
   constructor(
     @InjectModel(Order.name) private orderModel: Model<OrderDocument>,
     private clientService: ClientsService,
-    private userService: UserService,
+    private usersService: UsersService,
     private moduleRef: ModuleRef,
   ) {
     this.names = [
@@ -88,7 +89,7 @@ export class OrderService implements OnModuleInit {
       ...createOrder,
     });
     await order.save();
-    await this.userService.addOrUpdateUser({
+    await this.usersService.addOrUpdateUser({
       orderId: order.id,
       ...createOrder,
       userId:

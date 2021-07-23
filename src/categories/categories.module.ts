@@ -18,4 +18,4 @@ import { CategorySchema } from './entities/category.schema';
   providers: [CategoriesService],
   exports: [CategoriesService],
 })
-export class CategoryModule {}
+export class CategoriesModule {}

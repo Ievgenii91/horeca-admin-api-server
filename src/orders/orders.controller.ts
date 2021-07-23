@@ -13,19 +13,19 @@ import { TransformInterceptor } from 'src/common/response-transform.interceptor'
 import { Order } from 'src/schemas/order.schema';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { GetOrdersDto } from './dto/get-orders.dto';
-import { OrderService } from './order.service';
+import { OrdersService } from './orders.service';
 
 @UseInterceptors(TransformInterceptor)
-@Controller()
+@Controller('v1/orders')
 export class OrderController {
-  constructor(private orderService: OrderService) {}
+  constructor(private orderService: OrdersService) {}
 
-  @Get('orders')
+  @Get()
   getOrders(@Query() getOrdersDto: GetOrdersDto) {
     return this.orderService.getOrders(getOrdersDto);
   }
 
-  @Post('order')
+  @Post()
   createOrder(
     @Body(ValidationPipe) createOrderDto: CreateOrderDto,
     @Res({ passthrough: true }) response: Response,

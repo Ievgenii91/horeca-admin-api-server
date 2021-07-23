@@ -22,13 +22,13 @@ import { RequiredValidationPipe } from 'src/common/required-validation.pipe';
 import { GetProductsDto } from './dto/get-products.dto';
 import { Product } from 'src/schemas/product.schema';
 @UseInterceptors(TransformInterceptor)
-@Controller('v1/')
+@Controller('v1/products')
 export class ProductsController {
   private readonly logger = new Logger(ProductsController.name);
 
   constructor(private productService: ProductsService) {}
 
-  @Get('products')
+  @Get()
   getProducts(@ClientId() clientId: string) {
     return this.productService.getProducts(clientId);
   }
@@ -43,7 +43,7 @@ export class ProductsController {
     return this.productService.createProduct(createOrUpdateProductDto);
   }
 
-  @Get('products/search')
+  @Get('/search')
   async searchProducts(
     @ClientId() clientId: string,
     @Query(ValidationPipe) getProductsDto: GetProductsDto,
@@ -58,12 +58,12 @@ export class ProductsController {
     };
   }
 
-  @Get('products/categories')
+  @Get('/categories')
   getCategories(@ClientId() clientId: string): Promise<string[]> {
     return this.productService.getCategories(clientId);
   }
 
-  @Post('products/available')
+  @Post('/available')
   updateProductAvailability(
     @Body(ValidationPipe) body: UpdateProductAvailabilityDto,
   ) {
@@ -75,7 +75,7 @@ export class ProductsController {
   }
 
   //TODO: review get product to add filter product dto
-  @Get('products/slug/:slug')
+  @Get('/slug/:slug')
   getProduct(
     @Param('slug', RequiredValidationPipe) slug: string,
     @ClientId() clientId: string,
@@ -87,7 +87,7 @@ export class ProductsController {
     return this.productService.getProduct(slug, clientId, 'slug');
   }
 
-  @Get('products/:id')
+  @Get('/:id')
   getProductById(
     @Param('id', RequiredValidationPipe) id: string,
     @ClientId() clientId: string,
@@ -100,7 +100,7 @@ export class ProductsController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Delete('products/:id')
+  @Delete('/:id')
   deleteProduct(
     @Param('id', RequiredValidationPipe) id: string,
     @ClientId() clientId: string,
@@ -110,7 +110,7 @@ export class ProductsController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Post('products/:id')
+  @Post('/:id')
   update(
     @Param('id') id: string,
     @Body(ValidationPipe)

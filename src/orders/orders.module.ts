@@ -1,12 +1,13 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { OrderService } from './order.service';
-import { OrderController } from './order.controller';
+import { OrdersService } from './orders.service';
+import { OrderController } from './orders.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Order, OrderSchema } from 'src/schemas/order.schema';
 import { User, UserSchema } from 'src/schemas/user.schema';
 import { ClientsModule } from '../clients/clients.module';
-import { UserModule } from './../user/user.module';
+import { UsersModule } from '../users/users.module';
 import { EventsModule } from 'src/events/events.module';
+
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -20,11 +21,11 @@ import { EventsModule } from 'src/events/events.module';
       },
     ]),
     ClientsModule,
-    UserModule,
+    UsersModule,
     forwardRef(() => EventsModule),
   ],
-  providers: [OrderService],
+  providers: [OrdersService],
   controllers: [OrderController],
-  exports: [OrderService],
+  exports: [OrdersService],
 })
-export class OrderModule {}
+export class OrdersModule {}

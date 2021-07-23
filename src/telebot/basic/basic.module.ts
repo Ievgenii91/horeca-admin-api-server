@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ClientsModule } from 'src/clients/clients.module';
-import { TextModule } from 'src/text/text.module';
+import { TextsModule } from 'src/texts/texts.module';
 import { BasicService } from './basic.service';
 import { EventsService } from './events.service';
 import { KeyboardFactory } from './keyboard.factory';
 import { ViewService } from './view.service';
 import { SessionService } from './session.service';
-import { UserModule } from 'src/user/user.module';
+import { UsersModule } from 'src/users/users.module';
 @Module({
-  imports: [ClientsModule, TextModule, UserModule],
+  imports: [ClientsModule, TextsModule, UsersModule],
   providers: [
     BasicService,
     EventsService,
