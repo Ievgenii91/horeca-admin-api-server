@@ -4,7 +4,7 @@ import { OrderController } from './order.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Order, OrderSchema } from 'src/schemas/order.schema';
 import { User, UserSchema } from 'src/schemas/user.schema';
-import { ClientModule } from './../client/client.module';
+import { ClientsModule } from '../clients/clients.module';
 import { UserModule } from './../user/user.module';
 import { EventsModule } from 'src/events/events.module';
 @Module({
@@ -19,7 +19,7 @@ import { EventsModule } from 'src/events/events.module';
         schema: UserSchema,
       },
     ]),
-    ClientModule,
+    ClientsModule,
     UserModule,
     forwardRef(() => EventsModule),
   ],

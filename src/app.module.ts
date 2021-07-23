@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ClientModule } from './client/client.module';
+import { ClientsModule } from './clients/clients.module';
 import { AuthzModule } from './authz/authz.module';
 import { OrderModule } from './order/order.module';
 import { UserModule } from './user/user.module';
@@ -22,7 +22,7 @@ import { VisitsModule } from './visits/visits.module';
     MongooseModule.forRoot(process.env.MONGODB_URI),
     AuthzModule,
     EventsModule,
-    ClientModule,
+    ClientsModule,
     OrderModule,
     UserModule,
     // TelebotModule,

@@ -1,6 +1,6 @@
 import { Telegraf } from 'telegraf';
 import * as TelegrafI18n from 'telegraf-i18n/lib/i18n';
-import { ClientService } from 'src/client/client.service';
+import { ClientsService } from 'src/clients/clients.service';
 import { TextService } from 'src/text/text.service';
 import { ClientDocument } from 'src/schemas/client.schema';
 import { Injectable, OnModuleInit } from '@nestjs/common';
@@ -15,7 +15,7 @@ export class BasicService implements OnModuleInit {
 
   constructor(
     @InjectBot(process.env.BOT_NAME) private bot: Telegraf<BotContext>,
-    private clientService: ClientService,
+    private clientService: ClientsService,
     private textService: TextService,
     private userService: UserService,
   ) {}

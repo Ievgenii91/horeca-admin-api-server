@@ -6,9 +6,9 @@ import { Product } from 'src/schemas/product.schema';
 import { CreateClientDto } from './dto/create-client.dto';
 
 @Injectable()
-export class ClientService implements OnModuleInit {
+export class ClientsService implements OnModuleInit {
   private clients: Client[];
-  private readonly logger = new Logger(ClientService.name);
+  private readonly logger = new Logger(ClientsService.name);
 
   constructor(
     @InjectModel(Client.name) private clientModel: Model<ClientDocument>,

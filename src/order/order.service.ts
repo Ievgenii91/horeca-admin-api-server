@@ -3,7 +3,7 @@ import { ModuleRef } from '@nestjs/core';
 import { InjectModel } from '@nestjs/mongoose';
 import axios from 'axios';
 import { Model } from 'mongoose';
-import { ClientService } from 'src/client/client.service';
+import { ClientsService } from 'src/clients/clients.service';
 import { EventsGateway } from 'src/events/events.gateway';
 import { Order, OrderDocument } from 'src/schemas/order.schema';
 import { UserService } from './../user/user.service';
@@ -16,7 +16,7 @@ export class OrderService implements OnModuleInit {
 
   constructor(
     @InjectModel(Order.name) private orderModel: Model<OrderDocument>,
-    private clientService: ClientService,
+    private clientService: ClientsService,
     private userService: UserService,
     private moduleRef: ModuleRef,
   ) {

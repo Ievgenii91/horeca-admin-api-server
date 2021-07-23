@@ -7,7 +7,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ClientService } from './client.service';
+import { ClientsService } from './clients.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { Client } from 'src/schemas/client.schema';
@@ -17,22 +17,23 @@ import { User } from 'src/decorators/user.decorator';
 import { JwtPayload } from 'src/authz/interfaces/jwt-payload.interface';
 import { TransformInterceptor } from 'src/common/response-transform.interceptor';
 import { ApiBody } from '@nestjs/swagger';
+
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 @UseInterceptors(TransformInterceptor)
-@Controller('client')
-export class ClientController {
-  constructor(private clientService: ClientService) {}
+@Controller('v1/clients')
+export class ClientsController {
+  constructor(private clientService: ClientsService) {}
 
   @Get()
   @Permissions('read:oncoming')
-  async getClient(@User() user: JwtPayload): Promise<Client[]> {
-    return this.clientService.getClientByUser(user.email);
-  }
-
-  @Get('/all')
-  @Permissions('read:oncoming')
   async getAllClients(): Promise<Client[]> {
     return this.clientService.getClients();
+  }
+
+  @Get('current')
+  @Permissions('read:oncoming')
+  async getClient(@User() user: JwtPayload): Promise<Client[]> {
+    return this.clientService.getClientByUser(user.email);
   }
 
   @ApiBody({
