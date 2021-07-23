@@ -1,5 +1,5 @@
 import { IsBoolean, IsNotEmpty } from 'class-validator';
-import { BaseDto } from './../../common/dto/base.dto';
+import { BaseDto } from '../../common/dto/base.dto';
 import { ApiProperty } from '@nestjs/swagger';
 export class UpdateProductAvailabilityDto extends BaseDto {
   @IsNotEmpty()

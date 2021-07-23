@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, QueryOptions } from 'mongoose';
 import { Product, ProductDocument } from 'src/schemas/product.schema';
 import { CreateProductDto } from './dto/create-product.dto';
-import { DeleteProductDto } from './dto/delete-product.dto';
 import { GetProductsDto } from './dto/get-products.dto';
 import { UpdateProductAvailabilityDto } from './dto/update-product-availability.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -13,8 +12,8 @@ const options: Partial<QueryOptions> = {
   useFindAndModify: false,
 };
 @Injectable()
-export class ProductService {
-  private readonly logger = new Logger(ProductService.name);
+export class ProductsService {
+  private readonly logger = new Logger(ProductsService.name);
 
   constructor(
     @InjectModel(Product.name) private productModel: Model<ProductDocument>,
@@ -25,7 +24,7 @@ export class ProductService {
       `Products search performed ${JSON.stringify(
         getProductsDto,
       )} for client ${clientId}`,
-      ProductService.name,
+      ProductsService.name,
     );
     let sort = {};
     if (getProductsDto.sort) {
@@ -88,7 +87,7 @@ export class ProductService {
       `Product UPDATE performed ${JSON.stringify(
         updateProductDto,
       )} for client ${updateProductDto.clientId}`,
-      ProductService.name,
+      ProductsService.name,
     );
     return this.productModel
       .findOneAndUpdate(
@@ -128,7 +127,7 @@ export class ProductService {
       .exec();
   }
 
-  async deleteProduct(deleteProductDto: DeleteProductDto) {
+  async deleteProduct(deleteProductDto: { id: string; clientId: string }) {
     const { id, clientId } = deleteProductDto;
     return this.productModel
       .findOneAndDelete({

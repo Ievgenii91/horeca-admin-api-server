@@ -8,7 +8,7 @@ import { UserModule } from './user/user.module';
 import { TelebotModule } from './telebot/telebot.module';
 import { TextModule } from './text/text.module';
 import { EventsModule } from './events/events.module';
-import { ProductModule } from './product/product.module';
+import { ProductsModule } from './products/products.module';
 import { PagesModule } from './pages/pages.module';
 import { CartModule } from './cart/cart.module';
 import { TransformInterceptor } from './common/response-transform.interceptor';
@@ -27,7 +27,7 @@ import { VisitsModule } from './visits/visits.module';
     UserModule,
     // TelebotModule,
     TextModule,
-    ProductModule,
+    ProductsModule,
     PagesModule,
     CartModule,
     CategoryModule,

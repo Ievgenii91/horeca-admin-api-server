@@ -4,7 +4,7 @@ import { Model, QueryOptions } from 'mongoose';
 import { Cart, CartDocument, LineItem } from 'src/schemas/cart.schema';
 import { CreateCartDto } from './dto/create-cart.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
-import { ProductService } from './../product/product.service';
+import { ProductsService } from '../products/products.service';
 import { Product } from 'src/schemas/product.schema';
 import { Response } from 'express';
 
@@ -21,7 +21,7 @@ export class CartService {
 
   constructor(
     @InjectModel(Cart.name) private cartModel: Model<CartDocument>,
-    private productService: ProductService,
+    private productService: ProductsService,
   ) {}
 
   getPackagingPrice(lineItems: LineItem[], price: number) {
@@ -189,8 +189,9 @@ export class CartService {
     const lineItem = this.productToCartLineItem(product);
     let totalPrice = lineItem.variant.price;
     const cart = await this.cartModel.findById(cartId);
-    const quantity = cart.lineItems.find((v) => v.id === updateCartDto.itemId)
-      ?.quantity;
+    const quantity = cart.lineItems.find(
+      (v) => v.id === updateCartDto.itemId,
+    )?.quantity;
     let delta = false;
     if (quantity > updateCartDto.item.quantity) {
       delta = true;
