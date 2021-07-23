@@ -1,11 +1,11 @@
 import { LineItem } from 'src/schemas/cart.schema';
-import { CartService } from './cart.service';
+import { CartsService } from './carts.service';
 
-describe('CartService', () => {
-  let service: CartService;
+describe('CartsService', () => {
+  let service: CartsService;
 
   beforeEach(() => {
-    service = new CartService(null, null);
+    service = new CartsService(null, null);
   });
 
   describe('check service', () => {

@@ -6,11 +6,11 @@ import { AuthzModule } from './authz/authz.module';
 import { OrdersModule } from './orders/orders.module';
 import { UsersModule } from './users/users.module';
 import { TelebotModule } from './telebot/telebot.module';
-import { TextModule } from './texts/texts.module';
+import { TextsModule } from './texts/texts.module';
 import { EventsModule } from './events/events.module';
 import { ProductsModule } from './products/products.module';
 import { PagesModule } from './pages/pages.module';
-import { CartModule } from './cart/cart.module';
+import { CartsModule } from './carts/carts.module';
 import { TransformInterceptor } from './common/response-transform.interceptor';
 import { CategoriesModule } from './categories/categories.module';
 import { VisitsModule } from './visits/visits.module';
@@ -26,10 +26,10 @@ import { VisitsModule } from './visits/visits.module';
     OrdersModule,
     UsersModule,
     // TelebotModule,
-    TextModule,
+    TextsModule,
     ProductsModule,
     PagesModule,
-    CartModule,
+    CartsModule,
     CategoriesModule,
     VisitsModule,
   ],

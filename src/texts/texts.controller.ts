@@ -15,7 +15,7 @@ import { TransformInterceptor } from 'src/common/response-transform.interceptor'
 
 @UseGuards(AuthGuard('jwt'))
 @UseInterceptors(TransformInterceptor)
-@Controller('texts')
+@Controller('v1/texts')
 export class TextsController {
   constructor(private textsService: TextsService) {}
   @Get()

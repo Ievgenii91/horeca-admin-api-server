@@ -16,7 +16,7 @@ const TWO_DAYS = 172800000;
 const SHIPPING_PRICE = 33;
 const PACKAGING_PRICE = 5;
 @Injectable()
-export class CartService {
+export class CartsService {
   readonly cookieName = 'bc_cartId';
 
   constructor(

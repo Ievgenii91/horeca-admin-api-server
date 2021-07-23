@@ -14,14 +14,14 @@ import { TransformInterceptor } from 'src/common/response-transform.interceptor'
 import { CartId } from 'src/decorators/cart-cookie.decorator';
 import { ClientId } from 'src/decorators/client-id.decorator';
 import { Cart } from 'src/schemas/cart.schema';
-import { CartService } from './cart.service';
+import { CartsService } from './carts.service';
 import { CreateCartDto } from './dto/create-cart.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
 
 @UseInterceptors(TransformInterceptor)
-@Controller('cart')
-export class CartController {
-  constructor(private readonly cartService: CartService) {}
+@Controller('v1/cart')
+export class CartsController {
+  constructor(private readonly cartsService: CartsService) {}
 
   @Post()
   async add(
@@ -30,8 +30,12 @@ export class CartController {
     @CartId() cartId: string,
     @ClientId() clientId: string,
   ): Promise<Cart> {
-    const data = await this.cartService.create(createCartDto, clientId, cartId);
-    this.cartService.setCartInCookie(response, data._id);
+    const data = await this.cartsService.create(
+      createCartDto,
+      clientId,
+      cartId,
+    );
+    this.cartsService.setCartInCookie(response, data._id);
     return data;
   }
 
@@ -41,17 +45,17 @@ export class CartController {
     @CartId() cartId: string,
     @ClientId() clientId: string,
   ): Promise<Cart> {
-    return this.cartService.update(updateCartDto, cartId, clientId);
+    return this.cartsService.update(updateCartDto, cartId, clientId);
   }
 
   @Get()
   find(@CartId() cartId: string): Promise<Cart> {
-    return this.cartService.findById(cartId);
+    return this.cartsService.findById(cartId);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string): Promise<Cart> {
-    return this.cartService.findOne(id);
+    return this.cartsService.findOne(id);
   }
 
   @Delete()
@@ -60,9 +64,9 @@ export class CartController {
     @CartId() cartId: string,
     @Res({ passthrough: true }) res: Response,
   ): Promise<Cart> | null {
-    const cart = await this.cartService.remove(cartId, id);
+    const cart = await this.cartsService.remove(cartId, id);
     if (!cart) {
-      this.cartService.clearCookie(res);
+      this.cartsService.clearCookie(res);
     }
     return cart;
   }
