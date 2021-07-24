@@ -1,18 +1,18 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ClientModule } from './client/client.module';
+import { ClientsModule } from './clients/clients.module';
 import { AuthzModule } from './authz/authz.module';
-import { OrderModule } from './order/order.module';
-import { UserModule } from './user/user.module';
+import { OrdersModule } from './orders/orders.module';
+import { UsersModule } from './users/users.module';
 import { TelebotModule } from './telebot/telebot.module';
-import { TextModule } from './text/text.module';
+import { TextsModule } from './texts/texts.module';
 import { EventsModule } from './events/events.module';
-import { ProductModule } from './product/product.module';
+import { ProductsModule } from './products/products.module';
 import { PagesModule } from './pages/pages.module';
-import { CartModule } from './cart/cart.module';
+import { CartsModule } from './carts/carts.module';
 import { TransformInterceptor } from './common/response-transform.interceptor';
-import { CategoryModule } from './category/category.module';
+import { CategoriesModule } from './categories/categories.module';
 import { VisitsModule } from './visits/visits.module';
 @Module({
   imports: [
@@ -22,15 +22,15 @@ import { VisitsModule } from './visits/visits.module';
     MongooseModule.forRoot(process.env.MONGODB_URI),
     AuthzModule,
     EventsModule,
-    ClientModule,
-    OrderModule,
-    UserModule,
+    ClientsModule,
+    OrdersModule,
+    UsersModule,
     // TelebotModule,
-    TextModule,
-    ProductModule,
+    TextsModule,
+    ProductsModule,
     PagesModule,
-    CartModule,
-    CategoryModule,
+    CartsModule,
+    CategoriesModule,
     VisitsModule,
   ],
   providers: [TransformInterceptor],

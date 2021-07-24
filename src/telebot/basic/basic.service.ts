@@ -1,12 +1,12 @@
 import { Telegraf } from 'telegraf';
 import * as TelegrafI18n from 'telegraf-i18n/lib/i18n';
-import { ClientService } from 'src/client/client.service';
-import { TextService } from 'src/text/text.service';
+import { ClientsService } from 'src/clients/clients.service';
+import { TextsService } from 'src/texts/texts.service';
 import { ClientDocument } from 'src/schemas/client.schema';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectBot } from 'nestjs-telegraf';
 import { BotContext } from './common/bot.context';
-import { UserService } from 'src/user/user.service';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class BasicService implements OnModuleInit {
@@ -15,9 +15,9 @@ export class BasicService implements OnModuleInit {
 
   constructor(
     @InjectBot(process.env.BOT_NAME) private bot: Telegraf<BotContext>,
-    private clientService: ClientService,
-    private textService: TextService,
-    private userService: UserService,
+    private clientService: ClientsService,
+    private textsService: TextsService,
+    private usersService: UsersService,
   ) {}
 
   async onModuleInit() {
@@ -44,7 +44,7 @@ export class BasicService implements OnModuleInit {
   async checkUser() {
     this.bot.use(async (ctx: BotContext, next) => {
       if (ctx.message) {
-        await this.userService.addOrUpdateUserMiddleware(ctx);
+        await this.usersService.addOrUpdateUserMiddleware(ctx);
       }
       return next();
     });
@@ -85,7 +85,7 @@ export class BasicService implements OnModuleInit {
     this.client = this.clientService.entities.find(
       (v) => v.botToken === this.bot.telegram.token,
     ) as ClientDocument;
-    const texts = await this.textService.getTexts(this.client.get('id'));
+    const texts = await this.textsService.getTexts(this.client.get('id'));
     i18n.loadLocale('uk', texts['_doc']); // TODO remove
     this.bot.use(i18n.middleware());
   }
