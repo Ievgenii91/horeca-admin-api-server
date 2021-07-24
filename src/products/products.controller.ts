@@ -34,7 +34,7 @@ export class ProductsController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Post('products')
+  @Post()
   create(
     @Body(ValidationPipe)
     createOrUpdateProductDto: CreateProductDto | UpdateProductDto,

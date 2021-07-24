@@ -14,16 +14,27 @@ export class CreateCategoryDto {
   @IsOptional()
   imageUrl: string;
   // _id on front
+  @ApiProperty({
+    type: Number,
+  })
   entityId: number;
-  @ApiProperty()
+  @ApiProperty({
+    type: String,
+  })
   @IsNotEmpty()
   name: string;
-  @ApiProperty()
+  @ApiProperty({
+    type: String,
+  })
   path: string;
-  @ApiProperty()
+  @ApiProperty({
+    type: String,
+  })
   description: string;
-  @ApiProperty()
+  @ApiProperty({
+    type: String,
+  })
   productCount: number;
   @ApiProperty()
-  children: Array<CreateCategoryDto>;
+  children: any[]; // TODO: string type, but build throws strange exception
 }
