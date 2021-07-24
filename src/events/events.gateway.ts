@@ -10,17 +10,18 @@ import {
   ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { OrderService } from '../order/order.service';
+import { OrdersService } from '../orders/orders.service';
 @WebSocketGateway({
   transports: ['websocket'],
 })
 export class EventsGateway
-  implements OnGatewayInit, OnGatewayConnection, OnModuleInit {
+  implements OnGatewayInit, OnGatewayConnection, OnModuleInit
+{
   @WebSocketServer()
   server: Server;
 
   private readonly logger = new Logger(EventsGateway.name);
-  private orderService: OrderService;
+  private ordersService: OrdersService;
 
   static initializationCounts = 0;
 
@@ -32,7 +33,7 @@ export class EventsGateway
   }
 
   onModuleInit() {
-    this.orderService = this.moduleRef.get(OrderService, { strict: false });
+    this.ordersService = this.moduleRef.get(OrdersService, { strict: false });
   }
 
   @SubscribeMessage('finish_order')
@@ -40,7 +41,7 @@ export class EventsGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() { id }: { id: string },
   ): Promise<boolean> {
-    await this.orderService.finishOrder(id);
+    await this.ordersService.finishOrder(id);
     client.emit('finish_order', id);
     return true;
   }

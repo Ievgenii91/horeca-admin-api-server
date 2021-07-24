@@ -17,7 +17,7 @@ import { GetVisitsDto } from './dto/get-visits.dto';
 import { TransformInterceptor } from 'src/common/response-transform.interceptor';
 
 @UseInterceptors(TransformInterceptor)
-@Controller('visits')
+@Controller('v1/visits')
 export class VisitsController {
   constructor(private readonly visitsService: VisitsService) {}
 
