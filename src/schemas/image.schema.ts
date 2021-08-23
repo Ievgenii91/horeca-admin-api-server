@@ -10,6 +10,8 @@ export class Image {
   @Prop()
   url: string;
   @Prop()
+  key: string;
+  @Prop()
   isDefault: boolean;
 }
 

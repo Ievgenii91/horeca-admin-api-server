@@ -7,12 +7,9 @@ import * as helmet from 'helmet';
 import * as cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
 import { SocketIoAdapter } from './events/socket-io.adapter';
+import * as S3Router from 'react-s3-uploader/s3router';
 
-const corsOrigins = [
-  'http://localhost:3000',
-  'https://horeca-admin.herokuapp.com',
-  /vercel.app/,
-];
+const corsOrigins = process.env.CORS_DOMAINS.split(',');
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -28,6 +25,13 @@ async function bootstrap() {
 
   app.use(cookieParser());
 
+  app.enableCors({
+    origin: corsOrigins,
+    credentials: true,
+  });
+
+  app.use(helmet());
+
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -36,16 +40,19 @@ async function bootstrap() {
 
   app.useWebSocketAdapter(new SocketIoAdapter(app, corsOrigins));
 
+  app.use(
+    '/s3',
+    S3Router({
+      bucket: process.env.AWS_BUCKET_NAME,
+      region: process.env.AWS_BUCKET_REGION,
+      ACL: 'public-read',
+      uniquePrefix: true,
+    }),
+  );
+
   app.setGlobalPrefix('api');
 
   app.useStaticAssets(join(__dirname, '..', 'dist'));
-
-  app.enableCors({
-    origin: corsOrigins,
-    credentials: true,
-  });
-
-  app.use(helmet());
 
   //router
 

@@ -21,6 +21,7 @@ import { ClientId } from 'src/decorators/client-id.decorator';
 import { RequiredValidationPipe } from 'src/common/required-validation.pipe';
 import { GetProductsDto } from './dto/get-products.dto';
 import { Product } from 'src/schemas/product.schema';
+import { deleteBucketObject } from 'src/s3/client';
 @UseInterceptors(TransformInterceptor)
 @Controller('v1/products')
 export class ProductsController {
@@ -107,6 +108,18 @@ export class ProductsController {
   ) {
     this.logger.log(`delete product ${id}`, ProductsController.name);
     return this.productService.deleteProduct({ id, clientId });
+  }
+
+  @Post('/image')
+  deleteImage(
+    @Query('key') key: string,
+    @Body(ValidationPipe) { id, clientId }: { id: string; clientId: string },
+  ) {
+    this.logger.log(`delete image ${key}`, ProductsController.name);
+    if (id) {
+      this.productService.removeImage(key, { id, clientId });
+    }
+    return deleteBucketObject(key);
   }
 
   @UseGuards(AuthGuard('jwt'))

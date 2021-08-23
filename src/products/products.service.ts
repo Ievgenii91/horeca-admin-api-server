@@ -106,6 +106,25 @@ export class ProductsService {
       .exec();
   }
 
+  async removeImage(imageKey: string, updateProductDto: any) {
+    return this.productModel
+      .findOneAndUpdate(
+        {
+          clientId: updateProductDto.clientId,
+          id: updateProductDto.id,
+        },
+        {
+          $pull: {
+            images: {
+              key: imageKey,
+            },
+          },
+        },
+        options,
+      )
+      .exec();
+  }
+
   async updateProductAvailability(
     updateProductAvailabilityDto: UpdateProductAvailabilityDto,
   ) {
@@ -128,6 +147,7 @@ export class ProductsService {
   }
 
   async deleteProduct(deleteProductDto: { id: string; clientId: string }) {
+    // TODO delete images from s3 when deleting product
     const { id, clientId } = deleteProductDto;
     return this.productModel
       .findOneAndDelete({
