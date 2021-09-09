@@ -14,6 +14,7 @@ import { CartsModule } from './carts/carts.module';
 import { TransformInterceptor } from './common/response-transform.interceptor';
 import { CategoriesModule } from './categories/categories.module';
 import { VisitsModule } from './visits/visits.module';
+import { TimetablesModule } from './timetables/timetables.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -32,6 +33,7 @@ import { VisitsModule } from './visits/visits.module';
     CartsModule,
     CategoriesModule,
     VisitsModule,
+    TimetablesModule,
   ],
   providers: [TransformInterceptor],
 })

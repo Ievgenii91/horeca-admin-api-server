@@ -47,6 +47,15 @@ export class User {
   @Prop()
   invitedBy: string;
 
+  @Prop()
+  email: string;
+
+  @Prop()
+  role: any;
+
+  @Prop()
+  hourRate: number;
+
   constructor(data: Partial<User>) {
     if (data) {
       Object.assign(this, data);

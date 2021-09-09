@@ -4,6 +4,7 @@ import { FilterQuery, Model } from 'mongoose';
 import { User, UserDocument } from 'src/schemas/user.schema';
 import { Order } from 'src/schemas/order.schema';
 import { BotContext } from 'src/telebot/basic/common/bot.context';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -158,5 +159,10 @@ export class UsersService {
       )
       .exec();
     ctx.session.user.invitedBy = payload;
+  }
+
+  async addUser(userDto: CreateUserDto) {
+    const user = new this.userModel(new User(userDto));
+    return user.save();
   }
 }
