@@ -6,11 +6,6 @@ export enum RequestInitiator {
   Bot = 'bot',
 }
 
-interface Role {
-  name: string;
-  id: string;
-}
-
 export class CreateUserDto {
   @IsNotEmpty()
   id: number;
@@ -52,7 +47,8 @@ export class CreateUserDto {
   @IsEmail()
   email: string;
 
-  role: Role;
+  @IsNotEmpty()
+  role: string;
 
   @IsNotEmpty()
   hourRate: number;

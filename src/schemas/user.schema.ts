@@ -51,7 +51,7 @@ export class User {
   email: string;
 
   @Prop()
-  role: any;
+  role: string;
 
   @Prop()
   hourRate: number;
