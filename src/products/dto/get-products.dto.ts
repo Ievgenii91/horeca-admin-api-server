@@ -16,4 +16,6 @@ export class GetProductsDto {
   q: string;
   @ApiProperty()
   tag: string;
+  @ApiProperty()
+  limit: number;
 }

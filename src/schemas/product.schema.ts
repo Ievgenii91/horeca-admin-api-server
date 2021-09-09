@@ -58,6 +58,8 @@ export class Product {
   weight: number;
   @Prop()
   tags: string[];
+  @Prop()
+  sku: string;
 
   constructor(data: Partial<Product> = {}) {
     this.clientId = data.clientId;
@@ -82,6 +84,7 @@ export class Product {
     this.images = data.images || [];
     this.slug = data.slug || '';
     this.path = data.path || '';
+    this.sku = data.sku || '';
   }
 
   generateId(): string {
