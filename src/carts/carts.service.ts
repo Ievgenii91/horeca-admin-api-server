@@ -182,6 +182,10 @@ export class CartsService {
     cartId: string,
     clientId: string,
   ): Promise<Cart> {
+    if (!cartId) {
+      console.error('no cart id');
+      return;
+    }
     const product = await this.productService.getProduct(
       updateCartDto.itemId,
       clientId,
@@ -272,7 +276,7 @@ export class CartsService {
     response.cookie(this.cookieName, decodeURI(value), {
       httpOnly: false,
       sameSite: 'none',
-      secure: true,
+      secure: false, // TODO change
       maxAge,
     });
   }

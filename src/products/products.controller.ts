@@ -22,6 +22,7 @@ import { RequiredValidationPipe } from 'src/common/required-validation.pipe';
 import { GetProductsDto } from './dto/get-products.dto';
 import { Product } from 'src/schemas/product.schema';
 import { deleteBucketObject } from 'src/s3/client';
+import { RemoveProductImageDto } from './dto/remove-product-image.dto';
 @UseInterceptors(TransformInterceptor)
 @Controller('v1/products')
 export class ProductsController {
@@ -113,7 +114,7 @@ export class ProductsController {
   @Post('/image')
   deleteImage(
     @Query('key') key: string,
-    @Body(ValidationPipe) { id, clientId }: { id: string; clientId: string },
+    @Body(ValidationPipe) { id, clientId }: RemoveProductImageDto,
   ) {
     this.logger.log(`delete image ${key}`, ProductsController.name);
     if (id) {

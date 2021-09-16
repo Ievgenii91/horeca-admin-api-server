@@ -18,6 +18,8 @@ export class Category {
   @Prop()
   productCount: number;
   @Prop()
+  order: number;
+  @Prop()
   children: Array<Category>;
 }
 

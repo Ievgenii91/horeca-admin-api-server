@@ -57,9 +57,13 @@ export class Product {
   @Prop()
   weight: number;
   @Prop()
+  capacity: number;
+  @Prop()
   tags: string[];
   @Prop()
   sku: string;
+  @Prop()
+  variants: Partial<Product>[];
 
   constructor(data: Partial<Product> = {}) {
     this.clientId = data.clientId;
