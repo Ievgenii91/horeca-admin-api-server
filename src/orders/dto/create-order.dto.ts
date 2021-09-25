@@ -1,6 +1,6 @@
 import {
   IsNotEmpty,
-  IsPhoneNumber,
+  Matches,
   IsDateString,
   IsNumber,
   IsOptional,
@@ -25,7 +25,7 @@ export class CreateOrderDto {
   @IsEmail()
   owner: string;
 
-  @IsPhoneNumber('UA')
+  @Matches(/^\+[0-9]{2}\((0\d+)\)\s\d{3}\s\d{2}\s\d{2}/)
   @IsOptional()
   phone: string;
 
