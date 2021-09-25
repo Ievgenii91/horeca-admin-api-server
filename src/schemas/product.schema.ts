@@ -31,6 +31,8 @@ export class Product {
   @Prop()
   available: boolean;
   @Prop()
+  visible: boolean;
+  @Prop()
   addedCrossSales: Product[];
   @Prop()
   crossSales: Product[];
@@ -59,7 +61,7 @@ export class Product {
   @Prop()
   capacity: number;
   @Prop()
-  tags: string[];
+  tags: string;
   @Prop()
   sku: string;
   @Prop()
@@ -76,6 +78,7 @@ export class Product {
     this.type = data.type || null;
     this.action = data.action || data.name.toLowerCase().split(' ').join('_'); // data.action || data.id;
     this.available = data.available || true;
+    this.visible = !!data.visible;
     this.bonus = data.bonus || false;
     this.addedCrossSales = data.addedCrossSales || []; // added cross sales
     this.crossSales = data.crossSales || []; // list of products which can be cross saled

@@ -33,31 +33,17 @@ export class ProductsService {
       )} for client ${clientId}`,
       ProductsService.name,
     );
-    let sort = {};
-    if (getProductsDto.sort) {
-      const val = getProductsDto.sort;
-      const dir = (asc: string, desc: string): number => {
-        return (val === asc && 1) || (val === desc && -1);
-      };
-      sort = {
-        ...sort,
-        name: dir('asc', 'desc'),
-        price: dir('price-asc', 'price-desc'),
-        date: dir('latest-asc', 'latest-desc'),
-        rating: dir('trending-asc', 'trending-desc'),
-      };
-      delete getProductsDto.sort;
-    }
     const query = { ...getProductsDto, clientId };
     if (getProductsDto.search) {
       // text search index is set for name and additionalText fields in doc.
+      // TODO set index in tags field
       return this.productModel
         .find({
           $text: { $search: getProductsDto.search },
         })
-        .sort(sort);
+        .exec();
     }
-    return this.productModel.find(query).sort(sort);
+    return this.productModel.find(query as any).exec();
   }
 
   async getProducts(clientId: string): Promise<Product[]> {

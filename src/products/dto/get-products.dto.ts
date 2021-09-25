@@ -9,13 +9,11 @@ export class GetProductsDto {
   @ApiProperty()
   search: string;
   @ApiProperty()
-  brand: string; // TODO remove
+  type: string;
   @ApiProperty()
-  sort: string;
+  tags: string;
   @ApiProperty()
-  q: string;
+  rating: string;
   @ApiProperty()
-  tag: string;
-  @ApiProperty()
-  limit: number;
+  limit?: number;
 }
