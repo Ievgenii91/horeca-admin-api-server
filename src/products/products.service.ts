@@ -33,7 +33,7 @@ export class ProductsService {
       )} for client ${clientId}`,
       ProductsService.name,
     );
-    const query = { ...getProductsDto, clientId };
+    const query = { ...getProductsDto, clientId, visible: true };
     if (getProductsDto.search) {
       // text search index is set for name and additionalText fields in doc.
       // TODO set index in tags field
