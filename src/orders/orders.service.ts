@@ -21,16 +21,7 @@ export class OrdersService implements OnModuleInit {
     private usersService: UsersService,
     private moduleRef: ModuleRef,
   ) {
-    this.names = [
-      'грішник',
-      'майстер_над_хотдогами',
-      'мій_маленький_грішок',
-      'файна_мушля',
-      'розбійник',
-      'зима_близько',
-      'наливкович',
-      'сидр_сам_себе_не_вип`є',
-    ];
+    this.names = ['файна_мушля'];
   }
 
   onModuleInit() {
@@ -98,14 +89,8 @@ export class OrdersService implements OnModuleInit {
           : createOrder.userId,
     });
     await this.clientService.incrementOrdersCount(createOrder.clientId);
-
-    // PHONECALL_PASS
-    // ADMIN_PHONE
-    //https://smsc.ua/sys/send.php?login=crashraze&psw=18IM1buta!&phones=380630471200&mes=hello&call=1
-    const message = 'У вас новый заказ!';
-    axios.get(
-      `https://smsc.ua/sys/send.php?login=crashraze&psw=${process.env.PHONECALL_PASS}&phones=${process.env.ADMIN_PHONE}&mes=${message}&call=1`,
-    );
+    const message = 'У вас нове замовлення!';
+    axios.get(`${process.env.TELEPHONY_URL}&mes=${message}`);
     // send on oncoming site
     this.socketService.addOrder(order);
     // send on oncoming in telegram
