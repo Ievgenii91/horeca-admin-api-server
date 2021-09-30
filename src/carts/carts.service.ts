@@ -81,7 +81,7 @@ export class CartsService {
       'id',
     );
     const lineItem = this.productToCartLineItem(product);
-    let packagingPrice = this.getPackagingPrice([lineItem], PACKAGING_PRICE);
+    const packagingPrice = this.getPackagingPrice([lineItem], PACKAGING_PRICE);
     const totalPrice = lineItem.variant.price;
     if (cartId) {
       const cart = await this.cartModel.findById(cartId);
@@ -92,19 +92,11 @@ export class CartsService {
           packagingPrice,
         );
       }
-      packagingPrice = this.getPackagingPrice(
-        [...cart.lineItems, lineItem],
-        PACKAGING_PRICE,
-      );
       const item = cart.lineItems.find((v) => v.id === createCartDto.productId);
       const commonFieldsToIncrement = {
         lineItemsSubtotalPrice: totalPrice,
         subtotalPrice: totalPrice,
-        totalPrice: this.getTotalPrice(
-          totalPrice,
-          createCartDto.requiresShipping,
-          packagingPrice,
-        ),
+        totalPrice: totalPrice + PACKAGING_PRICE,
       };
       const commonFieldsToSet = {
         requiresShipping: createCartDto.requiresShipping,
