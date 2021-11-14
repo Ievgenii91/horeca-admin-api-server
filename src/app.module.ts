@@ -15,6 +15,8 @@ import { TransformInterceptor } from './common/response-transform.interceptor';
 import { CategoriesModule } from './categories/categories.module';
 import { VisitsModule } from './visits/visits.module';
 import { TimetablesModule } from './timetables/timetables.module';
+import { EmployeesModule } from './employees/employees.module';
+import { TimetrackingModule } from './timetracking/timetracking.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -34,6 +36,8 @@ import { TimetablesModule } from './timetables/timetables.module';
     CategoriesModule,
     VisitsModule,
     TimetablesModule,
+    EmployeesModule,
+    TimetrackingModule,
   ],
   providers: [TransformInterceptor],
 })

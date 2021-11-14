@@ -23,6 +23,7 @@ import { GetProductsDto } from './dto/get-products.dto';
 import { Product } from 'src/schemas/product.schema';
 import { deleteBucketObject } from 'src/s3/client';
 import { RemoveProductImageDto } from './dto/remove-product-image.dto';
+
 @UseInterceptors(TransformInterceptor)
 @Controller('v1/products')
 export class ProductsController {

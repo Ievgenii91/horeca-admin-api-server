@@ -6,14 +6,11 @@ import { CreateCartDto } from './dto/create-cart.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
 import { ProductsService } from '../products/products.service';
 import { Product } from 'src/schemas/product.schema';
-import { Response } from 'express';
 
 const options: Partial<QueryOptions> = {
   new: true,
   useFindAndModify: false,
 };
-const TWO_DAYS = 172800000;
-const SHIPPING_PRICE = 33;
 const PACKAGING_PRICE = 5;
 @Injectable()
 export class CartsService {
@@ -23,25 +20,6 @@ export class CartsService {
     @InjectModel(Cart.name) private cartModel: Model<CartDocument>,
     private productService: ProductsService,
   ) {}
-
-  getPackagingPrice(lineItems: LineItem[], price: number) {
-    let total = 0;
-    lineItems.forEach((v) => {
-      total += v.quantity * price;
-    });
-    return total;
-  }
-
-  getTotalPrice(
-    totalPrice: number,
-    requiresShipping: boolean,
-    packagingPrice: number,
-  ): number {
-    return (
-      (requiresShipping ? totalPrice + SHIPPING_PRICE : totalPrice) +
-      packagingPrice
-    );
-  }
 
   productToCartLineItem(product: Product): LineItem {
     return {
@@ -81,16 +59,11 @@ export class CartsService {
       'id',
     );
     const lineItem = this.productToCartLineItem(product);
-    const packagingPrice = this.getPackagingPrice([lineItem], PACKAGING_PRICE);
     const totalPrice = lineItem.variant.price;
     if (cartId) {
       const cart = await this.cartModel.findById(cartId);
       if (!cart) {
-        return this.createCartItem(
-          lineItem,
-          createCartDto.requiresShipping,
-          packagingPrice,
-        );
+        return this.createCartItem(lineItem, createCartDto.requiresShipping);
       }
       const item = cart.lineItems.find((v) => v.id === createCartDto.productId);
       const commonFieldsToIncrement = {
@@ -136,18 +109,13 @@ export class CartsService {
           .exec();
       }
     } else {
-      return this.createCartItem(
-        lineItem,
-        createCartDto.requiresShipping,
-        packagingPrice,
-      );
+      return this.createCartItem(lineItem, createCartDto.requiresShipping);
     }
   }
 
   async createCartItem(
     lineItem: LineItem,
     requiresShipping: boolean,
-    packagingPrice: number,
   ): Promise<CartDocument> {
     const totalPrice = lineItem.variant.price;
     const cartItem = new this.cartModel({
@@ -159,11 +127,7 @@ export class CartsService {
       requiresShipping,
       lineItemsSubtotalPrice: totalPrice,
       subtotalPrice: totalPrice,
-      totalPrice: this.getTotalPrice(
-        totalPrice,
-        requiresShipping,
-        packagingPrice,
-      ),
+      totalPrice: totalPrice,
     });
     await cartItem.save();
     return cartItem;
@@ -232,12 +196,6 @@ export class CartsService {
     const productToDelete = data?.lineItems.find((v) => v.id === id);
     const price =
       productToDelete?.variant.price * productToDelete.quantity || 0;
-    // eof
-    const total = this.getTotalPrice(
-      price,
-      false,
-      this.getPackagingPrice([productToDelete], PACKAGING_PRICE),
-    );
     const cart = await this.cartModel
       .findOneAndUpdate(
         { _id: cartId },
@@ -245,7 +203,7 @@ export class CartsService {
           $inc: {
             lineItemsSubtotalPrice: -price,
             subtotalPrice: -price,
-            totalPrice: -total,
+            totalPrice: -price,
           },
           $pull: {
             lineItems: {
@@ -262,19 +220,5 @@ export class CartsService {
     } else {
       return cart;
     }
-  }
-
-  setCartInCookie(response: Response, value: string, maxAge = TWO_DAYS): void {
-    response.cookie(this.cookieName, decodeURI(value), {
-      httpOnly: false,
-      sameSite: 'none',
-      secure: false, // TODO change
-      maxAge,
-    });
-  }
-
-  clearCookie(response: Response): void {
-    response.clearCookie(this.cookieName);
-    this.setCartInCookie(response, null, 0);
   }
 }
