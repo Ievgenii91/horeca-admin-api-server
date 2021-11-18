@@ -6,6 +6,7 @@ import {
   TimeTrackingDocument,
 } from 'src/schemas/timetracking.schema';
 import { CreateTimetrackingDto } from './dto/create-timetracking.dto';
+import { SearchTimetrackingDto } from './dto/search-timetracking.dto';
 import { UpdateTimetrackingDto } from './dto/update-timetracking.dto';
 
 @Injectable()
@@ -20,8 +21,26 @@ export class TimetrackingService {
     return timeTracking.save();
   }
 
-  findAll() {
-    return this.timeTrackingModel.find().exec();
+  findAll(filter: SearchTimetrackingDto) {
+    console.log(
+      new Date(new Date(filter.startDate).setUTCHours(0, 0, 1)).toISOString(),
+      new Date(new Date(filter.endDate).setUTCHours(23, 59, 59)).toISOString(),
+    );
+    return this.timeTrackingModel
+      .find({
+        clientId: filter.clientId,
+        startDate: {
+          $gte: new Date(
+            new Date(filter.startDate).setUTCHours(0, 0, 1),
+          ).toISOString(),
+        },
+        endDate: {
+          $lte: new Date(
+            new Date(filter.endDate).setUTCHours(23, 59, 59),
+          ).toISOString(),
+        },
+      } as any)
+      .exec();
   }
 
   findOne(_id: string) {

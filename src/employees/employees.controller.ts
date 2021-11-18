@@ -12,6 +12,7 @@ import { EmployeesService } from './employees.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { TransformInterceptor } from 'src/common/response-transform.interceptor';
+import { ClientId } from 'src/decorators/client-id.decorator';
 
 @UseInterceptors(TransformInterceptor)
 @Controller('v1/employees')
@@ -24,8 +25,8 @@ export class EmployeesController {
   }
 
   @Get()
-  findAll() {
-    return this.employeesService.findAll();
+  findAll(@ClientId() clientId: string) {
+    return this.employeesService.findAll(clientId);
   }
 
   @Get(':id')

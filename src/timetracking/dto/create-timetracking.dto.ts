@@ -4,6 +4,10 @@ import { ApiProperty } from '@nestjs/swagger';
 export class CreateTimetrackingDto {
   @IsNotEmpty()
   @ApiProperty()
+  clientId: string;
+
+  @IsNotEmpty()
+  @ApiProperty()
   employeeName: string;
 
   @IsNotEmpty()
@@ -12,9 +16,13 @@ export class CreateTimetrackingDto {
 
   @IsNotEmpty()
   @ApiProperty()
-  startDate: string;
+  startDate: Date;
 
   @IsNotEmpty()
   @ApiProperty()
-  endDate: string;
+  endDate: Date;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  ratePerHour: number;
 }

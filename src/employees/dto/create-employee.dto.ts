@@ -4,6 +4,9 @@ import { ApiProperty } from '@nestjs/swagger';
 export class CreateEmployeeDto {
   @IsNotEmpty()
   @ApiProperty()
+  clientId: string;
+  @IsNotEmpty()
+  @ApiProperty()
   name: string;
   @IsNotEmpty()
   @ApiProperty()
@@ -12,4 +15,8 @@ export class CreateEmployeeDto {
   ratePerHour: number;
   @ApiProperty()
   started: string;
+  @ApiProperty()
+  position: string;
+  @ApiProperty()
+  prevRates: Array<any>;
 }

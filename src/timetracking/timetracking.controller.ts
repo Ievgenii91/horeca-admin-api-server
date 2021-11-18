@@ -7,11 +7,15 @@ import {
   Param,
   Delete,
   UseInterceptors,
+  Query,
+  ValidationPipe,
 } from '@nestjs/common';
 import { TimetrackingService } from './timetracking.service';
 import { CreateTimetrackingDto } from './dto/create-timetracking.dto';
 import { UpdateTimetrackingDto } from './dto/update-timetracking.dto';
 import { TransformInterceptor } from 'src/common/response-transform.interceptor';
+import { ClientId } from 'src/decorators/client-id.decorator';
+import { SearchTimetrackingDto } from './dto/search-timetracking.dto';
 
 @UseInterceptors(TransformInterceptor)
 @Controller('v1/timetracking')
@@ -24,8 +28,11 @@ export class TimetrackingController {
   }
 
   @Get()
-  findAll() {
-    return this.timetrackingService.findAll();
+  findAll(
+    @ClientId() clientId: string,
+    @Query(ValidationPipe) searchTimetrackingDto: SearchTimetrackingDto,
+  ) {
+    return this.timetrackingService.findAll(searchTimetrackingDto);
   }
 
   @Get(':id')

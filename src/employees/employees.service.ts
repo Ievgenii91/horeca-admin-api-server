@@ -21,8 +21,8 @@ export class EmployeesService {
     return employee.save();
   }
 
-  findAll() {
-    return this.employeeModel.find().exec();
+  findAll(clientId: string) {
+    return this.employeeModel.find({ clientId }).exec();
   }
 
   findOne(_id: string) {
