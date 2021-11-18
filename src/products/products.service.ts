@@ -94,9 +94,7 @@ export class ProductsService {
 
   async updateProduct(updateProductDto: UpdateProductDto): Promise<Product> {
     this.logger.log(
-      `UPDATE product ${JSON.stringify(updateProductDto)} for client ${
-        updateProductDto.clientId
-      }`,
+      `UPDATE product ${updateProductDto.name} for client ${updateProductDto.clientId}`,
       ProductsService.name,
     );
     return this.productModel

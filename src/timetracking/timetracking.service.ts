@@ -22,10 +22,6 @@ export class TimetrackingService {
   }
 
   findAll(filter: SearchTimetrackingDto) {
-    console.log(
-      new Date(new Date(filter.startDate).setUTCHours(0, 0, 1)).toISOString(),
-      new Date(new Date(filter.endDate).setUTCHours(23, 59, 59)).toISOString(),
-    );
     return this.timeTrackingModel
       .find({
         clientId: filter.clientId,

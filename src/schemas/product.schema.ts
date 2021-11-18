@@ -91,6 +91,7 @@ export class Product {
     this.images = data.images || [];
     this.slug = data.slug || '';
     this.path = data.path || '';
+    this.capacity = data.capacity;
     this.sku = data.sku || '';
   }
 
