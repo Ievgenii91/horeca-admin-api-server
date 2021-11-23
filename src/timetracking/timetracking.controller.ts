@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   Query,
   ValidationPipe,
+  Logger,
 } from '@nestjs/common';
 import { TimetrackingService } from './timetracking.service';
 import { CreateTimetrackingDto } from './dto/create-timetracking.dto';
@@ -20,10 +21,15 @@ import { SearchTimetrackingDto } from './dto/search-timetracking.dto';
 @UseInterceptors(TransformInterceptor)
 @Controller('v1/timetracking')
 export class TimetrackingController {
+  private readonly logger = new Logger(TimetrackingController.name);
+
   constructor(private readonly timetrackingService: TimetrackingService) {}
 
   @Post()
   create(@Body() createTimetrackingDto: CreateTimetrackingDto) {
+    this.logger.log(
+      `create timetracking by ${createTimetrackingDto.employeeId} with startDate ${createTimetrackingDto.startDate} and endDate ${createTimetrackingDto.endDate}`,
+    );
     return this.timetrackingService.create(createTimetrackingDto);
   }
 
@@ -45,6 +51,9 @@ export class TimetrackingController {
     @Param('id') id: string,
     @Body() updateTimetrackingDto: UpdateTimetrackingDto,
   ) {
+    this.logger.log(
+      `update timetracking ${id} by ${updateTimetrackingDto.employeeId} with startDate ${updateTimetrackingDto.startDate} and endDate ${updateTimetrackingDto.endDate}`,
+    );
     return this.timetrackingService.update(id, updateTimetrackingDto);
   }
 

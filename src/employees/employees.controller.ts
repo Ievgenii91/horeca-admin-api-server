@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseInterceptors,
+  Logger,
 } from '@nestjs/common';
 import { EmployeesService } from './employees.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
@@ -17,6 +18,8 @@ import { ClientId } from 'src/decorators/client-id.decorator';
 @UseInterceptors(TransformInterceptor)
 @Controller('v1/employees')
 export class EmployeesController {
+  private readonly logger = new Logger(EmployeesController.name);
+
   constructor(private readonly employeesService: EmployeesService) {}
 
   @Post()
@@ -39,6 +42,9 @@ export class EmployeesController {
     @Param('id') id: string,
     @Body() updateEmployeeDto: UpdateEmployeeDto,
   ) {
+    this.logger.log(
+      `update employee ${id} with ${JSON.stringify(updateEmployeeDto)}`,
+    );
     return this.employeesService.update(id, updateEmployeeDto);
   }
 
