@@ -11,7 +11,7 @@ const options: Partial<QueryOptions> = {
   new: true,
   useFindAndModify: false,
 };
-const PACKAGING_PRICE = 5;
+const PACKAGING_PRICE = 0;
 @Injectable()
 export class CartsService {
   readonly cookieName = 'bc_cartId';
