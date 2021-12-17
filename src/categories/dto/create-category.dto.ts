@@ -34,6 +34,10 @@ export class CreateCategoryDto {
   @ApiProperty({
     type: String,
   })
+  classes: string;
+  @ApiProperty({
+    type: String,
+  })
   productCount: number;
   @ApiProperty()
   children: any[]; // TODO: string type, but build throws strange exception

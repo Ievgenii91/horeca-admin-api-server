@@ -16,6 +16,8 @@ export class Category {
   @Prop()
   description: string;
   @Prop()
+  classes: string;
+  @Prop()
   productCount: number;
   @Prop()
   order: number;
