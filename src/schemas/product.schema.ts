@@ -93,6 +93,7 @@ export class Product {
     this.path = data.path || '';
     this.capacity = data.capacity;
     this.sku = data.sku || '';
+    this.order = data.order || null;
   }
 
   generateId(): string {
